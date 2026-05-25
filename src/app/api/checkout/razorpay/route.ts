@@ -8,6 +8,11 @@ export async function POST(req: Request) {
     const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
+    console.log({
+      keyIdPresent: !!keyId,
+      secretPresent: !!keySecret
+    });
+
     if (!keyId || !keySecret) {
       return NextResponse.json(
         { error: 'Razorpay keys are missing from environment variables' },
@@ -30,8 +35,10 @@ export async function POST(req: Request) {
     
     return NextResponse.json({ order, key_id: keyId });
   } catch (error: any) {
-    console.error('Error creating Razorpay order:', error);
-    const errorMessage = error?.error?.description || error?.message || 'Internal Server Error';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    console.error('CRITICAL RAZORPAY ERROR:', error);
+    return NextResponse.json(
+      { error: String(error) }, 
+      { status: 500 }
+    );
   }
 }
