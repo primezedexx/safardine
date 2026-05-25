@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Script from 'next/script'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   CreditCard, Crown, Zap, CheckCircle2, ChevronRight, Clock, 
@@ -140,26 +141,14 @@ export default function BillingClient({
   const progressPercent = totalDays > 0 ? Math.min(100, Math.round(((totalDays - daysRemaining) / totalDays) * 100)) : 100
   const circumference = 2 * Math.PI * 54
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      if ((window as any).Razorpay) return resolve(true)
-      const script = document.createElement('script')
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-      script.onload = () => resolve(true)
-      script.onerror = () => resolve(false)
-      document.body.appendChild(script)
-    })
-  }
-
   const handleCheckout = async (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault()
     setFormError(null)
     setIsProcessing(true)
 
     try {
-      const res = await loadRazorpayScript()
-      if (!res) {
-        throw new Error('Razorpay SDK failed to load. Are you online?')
+      if (!(window as any).Razorpay) {
+        throw new Error('Razorpay SDK is still initializing. Please wait a moment or try again.')
       }
 
       const isUpgrade = currentRank > 0 && plans[selectedPlan].rank > currentRank
@@ -617,6 +606,10 @@ export default function BillingClient({
           </>
         )}
       </AnimatePresence>
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+      />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { 
   Pencil, 
   MapPin, 
@@ -45,6 +46,7 @@ export default function ProfileClient({
   reviewCount,
   avgRating
 }: ProfileClientProps) {
+  const router = useRouter()
   const [copied, setCopied] = useState(false)
 
   const handleCopyLink = async () => {
@@ -199,7 +201,7 @@ export default function ProfileClient({
           <div className="shrink-0 self-end md:self-center">
             <button 
               onClick={() => {
-                window.dispatchEvent(new CustomEvent('spaNavigate', { detail: { tab: 'settings', href: '/dashboard/settings' } }))
+                router.push('/dashboard/settings')
               }}
               className="inline-flex items-center gap-2 px-4 py-2 border border-[#F47B3E] text-[#F47B3E] hover:bg-[#F47B3E]/5 rounded-[8px] text-xs font-bold transition-all shadow-sm cursor-pointer"
             >
@@ -347,7 +349,7 @@ export default function ProfileClient({
                 RESTAURANT GALLERY
               </h3>
               <button 
-                onClick={() => window.dispatchEvent(new CustomEvent('spaNavigate', { detail: { tab: 'menu', href: '/dashboard/menu' } }))}
+                onClick={() => router.push('/dashboard/menu')}
                 className="text-[#F47B3E] font-bold text-xs hover:underline cursor-pointer"
               >
                 View
@@ -405,7 +407,7 @@ export default function ProfileClient({
                   You haven't connected any platforms yet. Connect them from settings.
                 </p>
                 <button 
-                  onClick={() => window.dispatchEvent(new CustomEvent('spaNavigate', { detail: { tab: 'settings', href: '/dashboard/settings' } }))}
+                  onClick={() => router.push('/dashboard/settings')}
                   className="inline-flex items-center justify-center gap-2 px-4 py-1.5 bg-[#1A1A1A] text-white rounded-[8px] text-[11px] font-bold transition-all shadow-sm cursor-pointer hover:bg-black shrink-0"
                 >
                   <Link2 className="w-3 h-3" />

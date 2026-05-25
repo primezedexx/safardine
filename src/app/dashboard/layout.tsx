@@ -77,6 +77,11 @@ export default async function DashboardLayout({
 
   const restaurantId = restaurant.id
 
+  const sixtyDaysAgo = new Date()
+  sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60)
+  sixtyDaysAgo.setHours(0, 0, 0, 0)
+  const sixtyDaysAgoISO = sixtyDaysAgo.toISOString()
+
   // FETCH ALL DATA FOR SPA IN PARALLEL WITH INDIVIDUAL CACHES
   const getMenuData = unstable_cache(
     async (restId: string) => await supabase.from('menu_items').select('*').eq('restaurant_id', restId).order('created_at', { ascending: false }),
@@ -86,13 +91,33 @@ export default async function DashboardLayout({
     async (restId: string) => await supabase.from('analytics').select('item_views').eq('restaurant_id', restId).maybeSingle(),
     [`spa-analytics-${restaurantId}`], { revalidate: 30 }
   )
+  const getScansCount = unstable_cache(
+    async (restId: string) => {
+      const { count } = await supabase.from('qr_scans').select('*', { count: 'exact', head: true }).eq('restaurant_id', restId)
+      return count || 0
+    },
+    [`spa-scans-count-${restaurantId}`], { revalidate: 30 }
+  )
   const getScansData = unstable_cache(
-    async (restId: string) => await supabase.from('qr_scans').select('id, created_at', { count: 'exact' }).eq('restaurant_id', restId),
-    [`spa-scans-${restaurantId}`], { revalidate: 30 }
+    async (restId: string, sinceISO: string) => {
+      const { data } = await supabase.from('qr_scans').select('id, created_at').eq('restaurant_id', restId).gte('created_at', sinceISO)
+      return data || []
+    },
+    [`spa-scans-data-${restaurantId}`], { revalidate: 30 }
+  )
+  const getVisitsCount = unstable_cache(
+    async (restId: string) => {
+      const { count } = await supabase.from('restaurant_visits').select('*', { count: 'exact', head: true }).eq('restaurant_id', restId)
+      return count || 0
+    },
+    [`spa-visits-count-${restaurantId}`], { revalidate: 30 }
   )
   const getVisitsData = unstable_cache(
-    async (restId: string) => await supabase.from('restaurant_visits').select('id, visitor_id, created_at', { count: 'exact' }).eq('restaurant_id', restId),
-    [`spa-visits-${restaurantId}`], { revalidate: 30 }
+    async (restId: string, sinceISO: string) => {
+      const { data } = await supabase.from('restaurant_visits').select('id, visitor_id, created_at').eq('restaurant_id', restId).gte('created_at', sinceISO)
+      return data || []
+    },
+    [`spa-visits-data-${restaurantId}`], { revalidate: 30 }
   )
   const getOrdersData = unstable_cache(
     async (restId: string) => await supabase.from('orders').select('id, order_total, created_at').eq('restaurant_id', restId),
@@ -106,15 +131,19 @@ export default async function DashboardLayout({
   const [
     { data: menuItems },
     { data: analytics },
-    { data: scansData, count: scansCount },
-    { data: visitsData, count: visitsCount },
+    scansCount,
+    scansData,
+    visitsCount,
+    visitsData,
     { data: orders },
     { data: reviews }
   ] = await Promise.all([
     getMenuData(restaurantId),
     getAnalyticsData(restaurantId),
-    getScansData(restaurantId),
-    getVisitsData(restaurantId),
+    getScansCount(restaurantId),
+    getScansData(restaurantId, sixtyDaysAgoISO),
+    getVisitsCount(restaurantId),
+    getVisitsData(restaurantId, sixtyDaysAgoISO),
     getOrdersData(restaurantId),
     getReviewsData(restaurantId)
   ])

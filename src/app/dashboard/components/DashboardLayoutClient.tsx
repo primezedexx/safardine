@@ -81,18 +81,15 @@ export default function DashboardLayoutClient({
   // Keep activeTab in sync with Next.js navigation
   useEffect(() => {
     setActiveTab(getInitialTab())
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Router State Consistency Check:', {
+        pathname: pathname,
+        browser: typeof window !== 'undefined' ? window.location.pathname : null
+      })
+    }
   }, [pathname])
 
-  // Listen for SPA navigation events from child components
-  useEffect(() => {
-    const handleSpaNavigate = (e: any) => {
-      const { tab, href } = e.detail
-      setActiveTab(tab)
-      window.history.pushState(null, '', href)
-    }
-    window.addEventListener('spaNavigate', handleSpaNavigate)
-    return () => window.removeEventListener('spaNavigate', handleSpaNavigate)
-  }, [])
+
 
   // ─── Notification States ─────────────────────────────────────────
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)
@@ -368,12 +365,8 @@ export default function DashboardLayoutClient({
   const handleDropdownNav = (e: React.MouseEvent<HTMLAnchorElement>, tab: string, href: string) => {
     e.preventDefault();
     setIsProfileOpen(false);
-    if (tab === 'other') {
-      router.push(href);
-      return;
-    }
     setActiveTab(tab as any);
-    window.history.pushState(null, '', href);
+    router.push(href);
   }
 
   // ─── Profile Dropdown Menu State ─────────────────────────────────
@@ -662,7 +655,7 @@ export default function DashboardLayoutClient({
             const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
               e.preventDefault()
               setActiveTab(tab.id as any)
-              window.history.pushState(null, '', tab.href)
+              router.push(tab.href)
             }
 
             return (
