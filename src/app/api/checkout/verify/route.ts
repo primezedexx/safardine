@@ -23,8 +23,9 @@ export async function POST(req: Request) {
     }
 
     // Payment is verified. Now explicitly capture it!
+    const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const razorpay = new Razorpay({
-      key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+      key_id: keyId!,
       key_secret: secret,
     });
     
