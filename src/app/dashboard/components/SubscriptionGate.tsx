@@ -106,7 +106,10 @@ export default function SubscriptionGate({
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ plan: selectedPlan })
+        body: JSON.stringify({ 
+          amount: plans[selectedPlan].priceNumber,
+          receipt: `rcpt_${restaurantId.substring(0, 8)}_${Date.now()}`
+        })
       })
 
       const orderData = await orderRes.json()
@@ -131,12 +134,12 @@ export default function SubscriptionGate({
       setLoadingText('Awaiting payment authorization...')
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Loaded from environment variable
-        amount: orderData.amount,
-        currency: orderData.currency,
+        key: orderData.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '', // Loaded from environment variable
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
         name: 'SafarDine',
         description: plans[selectedPlan].name,
-        order_id: orderData.id,
+        order_id: orderData.order.id,
         prefill: {
           email: userEmail,
         },
@@ -148,13 +151,25 @@ export default function SubscriptionGate({
             setIsProcessing(true)
             setLoadingText('Verifying Razorpay transaction capture...')
 
-            // 3. Update Supabase with active subscription
-            const { error: dbError } = await supabase
-              .from('restaurant_profiles')
-              .update({ subscription_active: true })
-              .eq('id', restaurantId)
+            const verifyRes = await fetch('/api/checkout/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                restaurant_id: restaurantId,
+                plan_name: plans[selectedPlan].name,
+                plan_amount: plans[selectedPlan].priceNumber,
+                plan_duration_days: selectedPlan === 'basic' ? 30 : selectedPlan === 'starter' ? 90 : selectedPlan === 'growth' ? 180 : 365
+              })
+            })
 
-            if (dbError) throw dbError
+            const verifyData = await verifyRes.json()
+
+            if (!verifyRes.ok) {
+              throw new Error(verifyData.error || 'Payment verification failed.')
+            }
 
             // Set fallback local keys
             if (typeof window !== 'undefined') {
@@ -164,7 +179,8 @@ export default function SubscriptionGate({
 
             setStep('success')
           } catch (err: any) {
-            setFormError('Payment captured but database activation failed. Please contact SafarDine support.')
+            console.error('Verification Error:', err)
+            setFormError(err.message || 'Payment verification failed. Please contact support.')
           } finally {
             setIsProcessing(false)
           }

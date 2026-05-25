@@ -722,21 +722,15 @@ export default function Home() {
                       <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div 
-                          initial={{ height: 0 }}
-                          animate={{ height: "auto" }}
-                          exit={{ height: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-6 pb-5 pt-1 text-slate-500 text-xs sm:text-sm font-medium leading-relaxed border-t border-slate-50">
-                            {faq.answer}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div 
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div className="px-6 pb-5 pt-1 text-slate-500 text-xs sm:text-sm font-medium leading-relaxed border-t border-slate-50">
+                        {faq.answer}
+                      </div>
+                    </div>
                   </div>
                 )
               })}
