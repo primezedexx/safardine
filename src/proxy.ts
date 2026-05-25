@@ -96,7 +96,8 @@ export async function proxy(request: NextRequest) {
   // Strengthen Content Security Policy to completely limit styled/scripted injections while allowing Next.js client hydration
   const cspHeader = [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${isDev ? "'unsafe-eval'" : ''} https://checkout.razorpay.com`,
+    // Temporarily disabled for debugging hydration blocking
+    // `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${isDev ? "'unsafe-eval'" : ''} https://checkout.razorpay.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
     `img-src 'self' data: https: blob:`,
     `font-src 'self' https://fonts.gstatic.com`,
@@ -112,9 +113,9 @@ export async function proxy(request: NextRequest) {
 
   // Set the nonce and CSP on the request headers so that Next.js SSR compiles with them
   const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-middleware-request-x-nonce', nonce)
-  requestHeaders.set('x-nonce', nonce)
-  requestHeaders.set('Content-Security-Policy', cspHeader)
+  // requestHeaders.set('x-middleware-request-x-nonce', nonce)
+  // requestHeaders.set('x-nonce', nonce)
+  // requestHeaders.set('Content-Security-Policy', cspHeader)
 
   const applySecurityHeaders = (res: NextResponse) => {
     const headers = res.headers
@@ -126,7 +127,7 @@ export async function proxy(request: NextRequest) {
       'Permissions-Policy',
       'camera=(), microphone=(), geolocation=(), interest-cohort=()'
     )
-    headers.set('Content-Security-Policy', cspHeader)
+    // headers.set('Content-Security-Policy', cspHeader)
     return res
   }
 
