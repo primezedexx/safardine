@@ -111,8 +111,10 @@ export async function proxy(request: NextRequest) {
   ].join('; ')
 
   // Set the nonce and CSP on the request headers so that Next.js SSR compiles with them
-  request.headers.set('x-nonce', nonce)
-  request.headers.set('Content-Security-Policy', cspHeader)
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-middleware-request-x-nonce', nonce)
+  requestHeaders.set('x-nonce', nonce)
+  requestHeaders.set('Content-Security-Policy', cspHeader)
 
   const applySecurityHeaders = (res: NextResponse) => {
     const headers = res.headers
@@ -157,7 +159,9 @@ export async function proxy(request: NextRequest) {
   }
 
   let supabaseResponse = NextResponse.next({
-    request,
+    request: {
+      headers: requestHeaders,
+    },
   })
 
   // 5. Secure Supabase SSR Session handling
@@ -172,7 +176,9 @@ export async function proxy(request: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
-            request,
+            request: {
+              headers: requestHeaders,
+            },
           })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
