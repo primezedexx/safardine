@@ -501,25 +501,44 @@ const TopCategories = React.memo(function TopCategories({ menuItems = [] }: { me
       }
     }
 
-    const colors = ['#10b981', '#34d399', '#a7f3d0']
+    const colors = ['#10b981', '#34d399', '#a7f3d0', '#e5e7eb']
     
-    // Convert top 3 to percentage of the top 3 total
-    const top3Total = sortedCats.reduce((acc, curr) => acc + curr[1], 0)
+    let processedCats = []
     
-    const categoryData = sortedCats.map((cat, idx) => ({
-      label: cat[0].length > 12 ? cat[0].substring(0, 12) + '...' : cat[0],
-      percentage: Math.round((cat[1] / top3Total) * 100),
-      color: colors[idx % colors.length]
-    }))
+    if (Object.keys(viewsByCategory).length <= 3) {
+      processedCats = sortedCats.map((cat, idx) => ({
+        label: cat[0].length > 12 ? cat[0].substring(0, 12) + '...' : cat[0],
+        percentage: Math.round((cat[1] / totalViews) * 100),
+        color: colors[idx % colors.length]
+      }))
+    } else {
+      const top3 = sortedCats.slice(0, 2)
+      const top3Views = top3.reduce((acc, curr) => acc + curr[1], 0)
+      const otherViews = totalViews - top3Views
+      
+      processedCats = top3.map((cat, idx) => ({
+        label: cat[0].length > 12 ? cat[0].substring(0, 12) + '...' : cat[0],
+        percentage: Math.round((cat[1] / totalViews) * 100),
+        color: colors[idx % colors.length]
+      }))
+      
+      processedCats.push({
+        label: 'Other',
+        percentage: Math.round((otherViews / totalViews) * 100),
+        color: colors[2]
+      })
+    }
 
     // ensure it sums to exactly 100
-    const sum = categoryData.reduce((acc, curr) => acc + curr.percentage, 0)
-    if (sum !== 100 && categoryData.length > 0) {
-      categoryData[0].percentage += (100 - sum)
+    const sum = processedCats.reduce((acc, curr) => acc + curr.percentage, 0)
+    if (sum !== 100 && processedCats.length > 0) {
+      // Find max percentage and adjust it to ensure sum is 100 without negative values
+      const maxIdx = processedCats.reduce((maxI, curr, i, arr) => curr.percentage > arr[maxI].percentage ? i : maxI, 0)
+      processedCats[maxIdx].percentage += (100 - sum)
     }
 
     return {
-      categoryData,
+      categoryData: processedCats,
       circumference: 2 * Math.PI * 45,
       hasData: true
     }
