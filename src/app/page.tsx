@@ -287,16 +287,15 @@ export default function Home() {
       </div>
 
       {/* Floating Premium Glassmorphic Header */}
-      <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-2xl bg-white/75 backdrop-blur-xl border border-slate-200/80 px-3.5 md:px-6 py-3 md:py-4 flex items-center justify-between shadow-lg shadow-slate-100/40">
-        <Link href="/" className="flex items-center select-none group">
+      <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-full bg-white/85 backdrop-blur-xl border border-slate-200/80 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between shadow-lg shadow-slate-100/40">
+        <Link href="/" className="flex items-center select-none group relative h-10 w-[120px]">
           <Image 
             src="/logo.png" 
             alt="Safar Dine Logo" 
-            width={150}
-            height={48}
+            width={180}
+            height={60}
             priority
-            style={{ width: 'auto' }}
-            className="h-10 md:h-12 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
+            className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
           />
         </Link>
         
@@ -1048,10 +1047,9 @@ export default function Home() {
                 <Image 
                   src="/logo.png" 
                   alt="Safar Dine Logo" 
-                  width={120}
-                  height={40}
-                  style={{ width: 'auto' }}
-                  className="h-10 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
+                  width={180}
+                  height={60}
+                  className="h-16 w-auto object-contain mb-6 scale-[1.35] origin-left grayscale hover:grayscale-0 transition-all duration-300" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">

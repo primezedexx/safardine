@@ -399,18 +399,18 @@ export default function DashboardLayoutClient({
       {trialBanner}
 
       {/* TOP HEADER (Locked to height 72px) - Pure White background, no shadow, no border */}
-      <header className="sticky top-0 z-40 bg-white  h-[72px] shrink-0 select-none">
-        <div className="max-w-[1440px] w-full h-full mx-auto px-8 flex items-center justify-between">
-          {/* Left: Safardine Logo (Cropped and Scaled to make typography prominent) */}
+      <header className="sticky top-0 z-40 bg-white h-16 shrink-0 select-none border-b border-gray-50">
+        <div className="max-w-[1440px] w-full h-full mx-auto px-6 md:px-8 flex items-center justify-between">
+          {/* Left: Safardine Logo */}
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="flex items-center group relative">
+            <Link href="/dashboard" className="flex items-center group relative h-10 w-[120px]">
               <Image 
                 src="/logo.png" 
                 alt="Safardine" 
-                width={150}
-                height={48}
+                width={180}
+                height={60}
                 priority
-                className="w-auto h-10 md:h-12 object-contain select-none group-hover:scale-[1.02] transition-transform duration-200" 
+                className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
               />
             </Link>
           </div>
