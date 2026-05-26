@@ -34,14 +34,6 @@ export async function POST(req: Request) {
           is_read: false
         });
         if (notifError) console.error("Error inserting scan notification:", notifError);
-
-        // Send Push Notification
-        await sendPushNotification({
-          userIds: [restaurantId],
-          title: `Menu Scanned 👀`,
-          message: `A customer just scanned the QR menu.`,
-          url: `/dashboard`
-        });
       }
     } else if (type === 'visit') {
       const { error } = await supabase.from('restaurant_visits').insert({
@@ -97,14 +89,6 @@ export async function POST(req: Request) {
         is_read: false
       });
       if (notifError) console.error("Error inserting review notification:", notifError);
-
-      // Send Push Notification
-      await sendPushNotification({
-        userIds: [restaurantId],
-        title: `New Review (⭐ ${data?.rating}/5) 🌟`,
-        message: data?.comment ? `"${data.comment}"` : `A customer rated their experience ${data?.rating} stars.`,
-        url: `/dashboard`
-      });
     } else {
       // Legacy analytics view/language tracking
       let { data: analytics } = await supabase
