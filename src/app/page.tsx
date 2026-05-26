@@ -1044,7 +1044,7 @@ export default function Home() {
                 <img 
                   src="/logo-transparent.png" 
                   alt="Safar Dine Logo" 
-                  className="h-full w-auto object-contain grayscale hover:grayscale-0 group-hover:scale-[1.05] transition-all duration-300" 
+                  className="h-full w-auto object-contain group-hover:scale-[1.05] transition-all duration-300" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">
