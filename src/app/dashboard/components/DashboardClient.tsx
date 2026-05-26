@@ -304,6 +304,15 @@ export default function DashboardClient({
     }
   ]
 
+  const [isDesktop, setIsDesktop] = useState(true)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Compute dynamic SVG path for chart
   const { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels } = useMemo(() => {
     if (!dynamicChartData || dynamicChartData.length === 0) {
@@ -316,9 +325,9 @@ export default function DashboardClient({
     
     const yAxisTicks = [maxChartValue, maxChartValue * 0.8, maxChartValue * 0.6, maxChartValue * 0.4, maxChartValue * 0.2, 0]
     
-    const SVG_HEIGHT = 220
+    const SVG_HEIGHT = isDesktop ? 380 : 220
     const getY = (val: number) => {
-      return SVG_HEIGHT - (val / maxChartValue) * 200 // 20px top padding
+      return SVG_HEIGHT - (val / maxChartValue) * (SVG_HEIGHT - 20) // 20px top padding
     }
 
     const yCoords = dynamicChartData.map(d => getY(d.value))
@@ -340,8 +349,8 @@ export default function DashboardClient({
       return parts.length === 2 ? `${parts[1]} ${parts[0]}` : d.day
     })
 
-    return { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels }
-  }, [dynamicChartData])
+    return { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels, SVG_HEIGHT }
+  }, [dynamicChartData, isDesktop])
 
   // Top Performing Dishes (Expanded list to support the scrollable "View all" search popup)
   const topDishes = useMemo(() => liveMenuItems.slice(0, 12).map(item => {
@@ -544,9 +553,9 @@ export default function DashboardClient({
                 </p>
               </div>
             ) : (
-              <div className="flex h-[250px] w-full mt-2 select-none gap-3 relative">
+              <div className="flex w-full mt-2 select-none gap-3 relative flex-1">
                 {/* Y-Axis Labels */}
-                <div className="flex flex-col justify-between text-[10.5px] font-semibold text-[#9A9A9A] h-[220px] text-right w-8 select-none leading-none z-20 bg-white">
+                <div className="flex flex-col justify-between text-[10.5px] font-semibold text-[#9A9A9A] text-right w-8 select-none leading-none z-20 bg-white" style={{ height: `${SVG_HEIGHT}px` }}>
                   {yAxisTicks.map((tick, i) => (
                     <span key={i} className="-mt-1.5">{tick > 999 ? `${(tick/1000).toFixed(1).replace('.0', '')}K` : Math.round(tick)}</span>
                   ))}
@@ -562,15 +571,17 @@ export default function DashboardClient({
                 {/* SVG Graph Area */}
                 <div 
                   ref={graphContainerRef}
-                  className="flex-1 relative h-[250px] overflow-x-auto overflow-y-hidden scrollbar-hide z-10"
+                  className="flex-1 relative overflow-x-auto overflow-y-hidden scrollbar-hide z-10"
+                  style={{ height: `${SVG_HEIGHT + 30}px` }}
                 >
                   <div 
                     className="h-full relative flex flex-col transition-all duration-75"
                     style={{ width: `${zoomLevel}%`, minWidth: '100%' }}
                   >
                     <svg 
-                      className="w-full h-[220px] overflow-visible relative pl-1" 
-                      viewBox={`0 0 ${chartWidth} 220`}
+                      className="w-full overflow-visible relative pl-1" 
+                      style={{ height: `${SVG_HEIGHT}px` }}
+                      viewBox={`0 0 ${chartWidth} ${SVG_HEIGHT}`}
                       preserveAspectRatio="none"
                     >
                         <defs>
@@ -596,7 +607,7 @@ export default function DashboardClient({
                               x1={x} 
                               y1="0" 
                               x2={x} 
-                              y2="220" 
+                              y2={SVG_HEIGHT} 
                               stroke="#F8F8F8" 
                               strokeWidth="1" 
                             />
@@ -663,7 +674,7 @@ export default function DashboardClient({
                         className="absolute bg-[#111111] text-white text-[12px] font-medium px-2.5 py-1.5 rounded-lg shadow-md z-30 transition-all duration-150 pointer-events-none"
                         style={{
                           left: `${(hoveredDataPoint / (dynamicChartData.length - 1)) * 100}%`,
-                          top: `${(yCoords[hoveredDataPoint] * (250 / 220))}px`,
+                          top: `${(yCoords[hoveredDataPoint])}px`,
                           transform: 'translate(-50%, -100%)',
                           marginTop: '-8px'
                         }}
