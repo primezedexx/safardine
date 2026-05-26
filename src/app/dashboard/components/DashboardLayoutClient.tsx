@@ -91,6 +91,19 @@ export default function DashboardLayoutClient({
     }
   }, [pathname])
 
+  // Multi-tab logout synchronization
+  useEffect(() => {
+    const supabase = createClient()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        router.push('/login')
+      }
+    })
+
+    return () => {
+      subscription?.unsubscribe()
+    }
+  }, [router])
 
 
   // ─── Notification States ─────────────────────────────────────────
