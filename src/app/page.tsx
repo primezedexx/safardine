@@ -288,11 +288,11 @@ export default function Home() {
 
       {/* Floating Premium Glassmorphic Header */}
       <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-2xl bg-white/75 backdrop-blur-xl border border-slate-200/80 px-3.5 md:px-6 py-3 md:py-4 flex items-center justify-between shadow-lg shadow-slate-100/40">
-        <Link href="/" className="flex items-center group h-12 w-[160px] relative overflow-hidden">
+        <Link href="/" className="flex items-center justify-center group h-12 w-[160px] relative">
           <img 
             src="/logo-transparent.png" 
             alt="Safar Dine Logo" 
-            className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain group-hover:scale-[1.02] transition-transform duration-200" 
+            className="w-full h-full object-contain scale-[2.8] origin-center select-none pointer-events-none group-hover:scale-[2.85] transition-transform duration-200" 
           />
         </Link>
         
@@ -1040,11 +1040,11 @@ export default function Home() {
             
             {/* Column 1: Info */}
             <div className="col-span-2 space-y-4">
-              <Link href="/" className="flex items-center group h-12 w-[160px] relative overflow-hidden mb-6">
+              <Link href="/" className="flex items-center justify-center group h-12 w-[160px] relative mb-6">
                 <img 
                   src="/logo-transparent.png" 
                   alt="Safar Dine Logo" 
-                  className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain grayscale hover:grayscale-0 transition-all duration-300" 
+                  className="w-full h-full object-contain scale-[2.8] origin-center select-none pointer-events-none grayscale hover:grayscale-0 transition-all duration-300" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">
