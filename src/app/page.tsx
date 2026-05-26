@@ -288,8 +288,12 @@ export default function Home() {
 
       {/* Floating Premium Glassmorphic Header */}
       <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-2xl bg-white/75 backdrop-blur-xl border border-slate-200/80 px-3.5 md:px-6 py-3 md:py-4 flex items-center justify-between shadow-lg shadow-slate-100/40">
-        <Link href="/" className="flex items-center justify-center group h-12 px-2 relative">
-          <span className="font-extrabold text-xl text-slate-800 tracking-tight group-hover:scale-[1.02] transition-transform duration-200">Safar Dine</span>
+        <Link href="/" className="flex items-center group h-12 relative">
+          <img 
+            src="/logo-transparent.png" 
+            alt="Safar Dine Logo" 
+            className="h-full w-auto object-contain select-none group-hover:scale-[1.05] transition-transform duration-200" 
+          />
         </Link>
         
         <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-500">
@@ -1036,8 +1040,12 @@ export default function Home() {
             
             {/* Column 1: Info */}
             <div className="col-span-2 space-y-4">
-              <Link href="/" className="flex items-center justify-center group h-12 px-2 relative mb-6">
-                <span className="font-extrabold text-2xl text-slate-800 tracking-tight">Safar Dine</span>
+              <Link href="/" className="flex items-center group h-12 relative mb-6">
+                <img 
+                  src="/logo-transparent.png" 
+                  alt="Safar Dine Logo" 
+                  className="h-full w-auto object-contain grayscale hover:grayscale-0 group-hover:scale-[1.05] transition-all duration-300" 
+                />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">
                 Auto-translate menus, automate upselling, and monitor dine-in metrics using intelligent, responsive visual overlays. Deployed with row level database insulation.
