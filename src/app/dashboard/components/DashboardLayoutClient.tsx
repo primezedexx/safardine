@@ -407,10 +407,10 @@ export default function DashboardLayoutClient({
               <Image 
                 src="/logo.png" 
                 alt="Safardine" 
-                width={140}
-                height={40}
+                width={150}
+                height={48}
                 priority
-                className="w-auto h-8 md:h-10 object-contain select-none group-hover:scale-[1.02] transition-transform duration-200" 
+                className="w-auto h-10 md:h-12 object-contain select-none group-hover:scale-[1.02] transition-transform duration-200" 
               />
             </Link>
           </div>
