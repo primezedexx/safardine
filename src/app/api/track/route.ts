@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { sendPushNotification } from '@/lib/onesignal';
 
 export async function POST(req: Request) {
   try {
@@ -33,6 +34,14 @@ export async function POST(req: Request) {
           is_read: false
         });
         if (notifError) console.error("Error inserting scan notification:", notifError);
+
+        // Send Push Notification
+        await sendPushNotification({
+          userIds: [restaurantId],
+          title: `Menu Scanned 👀`,
+          message: `A customer just scanned the QR menu.`,
+          url: `/dashboard`
+        });
       }
     } else if (type === 'visit') {
       const { error } = await supabase.from('restaurant_visits').insert({
@@ -62,6 +71,14 @@ export async function POST(req: Request) {
           is_read: false
         });
         if (notifError) console.error("Error inserting order notification:", notifError);
+
+        // Send Push Notification
+        await sendPushNotification({
+          userIds: [restaurantId],
+          title: `New Order (Table ${data.tableNumber}) 🔔`,
+          message: desc,
+          url: `/dashboard`
+        });
       }
     } else if (type === 'review') {
       // Store the review in the reviews table
@@ -80,6 +97,14 @@ export async function POST(req: Request) {
         is_read: false
       });
       if (notifError) console.error("Error inserting review notification:", notifError);
+
+      // Send Push Notification
+      await sendPushNotification({
+        userIds: [restaurantId],
+        title: `New Review (⭐ ${data?.rating}/5) 🌟`,
+        message: data?.comment ? `"${data.comment}"` : `A customer rated their experience ${data?.rating} stars.`,
+        url: `/dashboard`
+      });
     } else {
       // Legacy analytics view/language tracking
       let { data: analytics } = await supabase
