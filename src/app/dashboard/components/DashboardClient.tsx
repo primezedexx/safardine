@@ -321,7 +321,7 @@ export default function DashboardClient({
     
     const maxValue = Math.max(...dynamicChartData.map(d => d.value))
     const hasData = maxValue > 0
-    const maxChartValue = hasData ? Math.ceil(maxValue * 1.15) : 5
+    const maxChartValue = hasData ? Math.max(5, Math.ceil((maxValue * 1.15) / 5) * 5) : 5
     
     const yAxisTicks = [maxChartValue, maxChartValue * 0.8, maxChartValue * 0.6, maxChartValue * 0.4, maxChartValue * 0.2, 0]
     
