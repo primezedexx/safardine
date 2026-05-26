@@ -24,10 +24,11 @@ export default function OneSignalProvider({
             appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
             allowLocalhostAsSecureOrigin: true,
             // We want to trigger the prompt manually later via our custom UI
+            // @ts-ignore - The react-onesignal types for this are sometimes overly strict
             autoRegister: false, 
             notifyButton: {
               enable: false,
-            },
+            } as any,
           });
 
           // Log in the user to associate devices with their Supabase user ID
