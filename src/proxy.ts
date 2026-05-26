@@ -1,6 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
 // 1. Enterprise-grade High-performance Local In-Memory Rate Limiter (Safety Fallback)
 const localIpCounts = new Map<string, { count: number; resetTime: number }>()
 
@@ -26,36 +29,39 @@ function checkLocalRateLimit(ip: string, category: string, limit: number): { lim
 }
 
 // 2. Production Upstash Redis Rate Limiter with Local Resiliency Fallback
-async function checkUpstashRateLimit(ip: string, category: string, limit: number): Promise<{ limited: boolean; current: number }> {
-  const url = process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+const redis = (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    })
+  : null;
 
-  if (!url || !token) {
+const limiters = new Map<number, Ratelimit>();
+function getLimiter(limit: number) {
+  if (!limiters.has(limit)) {
+    limiters.set(limit, new Ratelimit({
+      redis: redis!,
+      limiter: Ratelimit.slidingWindow(limit, '1 m'),
+      analytics: true,
+    }));
+  }
+  return limiters.get(limit)!;
+}
+
+async function checkUpstashRateLimit(ip: string, category: string, limit: number): Promise<{ limited: boolean; current: number }> {
+  if (!redis) {
     // Falls back gracefully to local rate limiter if Redis credentials are not configured yet
     return checkLocalRateLimit(ip, category, limit)
   }
 
   try {
-    const key = `ratelimit:${category}:${ip}`
+    const ratelimit = getLimiter(limit);
+    const { success, remaining } = await ratelimit.limit(`${category}:${ip}`);
     
-    // Call Upstash pipeline REST API for high-speed atomic transactions
-    const response = await fetch(`${url}/pipeline`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify([
-        ['INCR', key],
-        ['EXPIRE', key, 60] // 60 seconds sliding window
-      ])
-    })
-
-    const data = await response.json()
-    if (Array.isArray(data) && data[0] && typeof data[0].result === 'number') {
-      const current = data[0].result
-      return { limited: current > limit, current }
-    }
+    // If remaining is limit - 1, it means current usage is 1
+    const current = limit - remaining;
+    
+    return { limited: !success, current }
   } catch (err) {
     console.error('⚠️ [SECURITY AUDIT] Upstash Redis error, falling back to local memory guard:', err)
   }
