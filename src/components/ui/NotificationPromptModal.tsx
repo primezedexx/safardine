@@ -17,8 +17,9 @@ export default function NotificationPromptModal() {
           // Check if already subscribed or denied
           const isSupported = OneSignal.Notifications.isPushSupported();
           if (isSupported) {
-            const permission = OneSignal.Notifications.permission;
-            if (permission !== "granted" && permission !== "denied") {
+            // @ts-ignore - type definition in react-onesignal might be a boolean
+            const permission: any = OneSignal.Notifications.permission;
+            if (permission !== true && permission !== "granted" && permission !== "denied") {
               setIsOpen(true);
             }
           }
