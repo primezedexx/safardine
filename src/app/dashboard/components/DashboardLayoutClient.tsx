@@ -15,6 +15,8 @@ import { createClient } from '@/lib/supabase/client'
 import OrdersHistoryModal from './OrdersHistoryModal'
 import DashboardClient from './DashboardClient'
 import dynamic from 'next/dynamic'
+import OneSignalProvider from '@/components/providers/OneSignalProvider'
+import NotificationPromptModal from '@/components/ui/NotificationPromptModal'
 
 // TabSkeleton — matches the height of the real content to prevent CLS
 const TabSkeleton = () => (
@@ -376,6 +378,10 @@ export default function DashboardLayoutClient({
 
   return (
     <div className={`h-screen flex flex-col overflow-hidden font-sans antialiased text-[#111827] bg-[#F5F5F5]`}>
+      {/* Push Notification Providers & Prompts */}
+      <OneSignalProvider userId={restaurant?.id} />
+      <NotificationPromptModal />
+
       {/* Trial Countdown Banner */}
       {trialBanner}
 

@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { uploadRestaurantImage } from '@/app/(auth)/actions'
+import OneSignal from 'react-onesignal'
 import ImageCropperModal from './ImageCropperModal'
 import {
   LayoutGrid,
@@ -285,6 +286,11 @@ export default function SettingsClient({ restaurant }: SettingsClientProps) {
           }
         })
         .eq('id', profile.id)
+
+      // Sync with OneSignal if initialized
+      if (typeof window !== "undefined" && OneSignal.User) {
+        OneSignal.User.addTag(key, value.toString());
+      }
     } catch (e) {
       console.error('Failed to update notifications', e)
     }
