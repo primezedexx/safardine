@@ -5,11 +5,11 @@ export function Navbar() {
   return (
     <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-2xl bg-white/75 backdrop-blur-xl border border-slate-200/80 px-4 md:px-6 py-3 flex items-center justify-between shadow-lg shadow-slate-100/40">
       
-      <Link href="/" className="flex items-center select-none group relative h-10 w-[120px]">
+      <Link href="/" className="flex items-center group h-12 w-[160px] relative overflow-hidden">
         <img 
           src="/logo-transparent.png" 
           alt="Safar Dine Logo" 
-          className="h-16 w-auto object-contain scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
+          className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain group-hover:scale-[1.02] transition-transform duration-200" 
         />
       </Link>
 

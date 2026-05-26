@@ -288,14 +288,14 @@ export default function Home() {
 
       {/* Floating Premium Glassmorphic Header */}
       <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-full bg-white/85 backdrop-blur-xl border border-slate-200/80 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between shadow-lg shadow-slate-100/40">
-        <Link href="/" className="flex items-center select-none group relative h-10 w-[120px]">
+        <Link href="/" className="flex items-center group h-12 w-[160px] relative overflow-hidden">
           <Image 
             src="/logo-transparent.png" 
             alt="Safar Dine Logo" 
-            width={180}
-            height={60}
+            width={216}
+            height={144}
             priority
-            className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
+            className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain select-none group-hover:scale-[1.02] transition-transform duration-200" 
           />
         </Link>
         
@@ -1043,13 +1043,13 @@ export default function Home() {
             
             {/* Column 1: Info */}
             <div className="col-span-2 space-y-4">
-              <Link href="/" className="flex items-center select-none group w-fit">
+              <Link href="/" className="flex items-center group h-12 w-[160px] relative overflow-hidden mb-6">
                 <Image 
                   src="/logo-transparent.png" 
                   alt="Safar Dine Logo" 
-                  width={180}
-                  height={60}
-                  className="h-16 w-auto object-contain mb-6 scale-[1.35] origin-left grayscale hover:grayscale-0 transition-all duration-300" 
+                  width={216}
+                  height={144}
+                  className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain grayscale hover:grayscale-0 transition-all duration-300" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">
