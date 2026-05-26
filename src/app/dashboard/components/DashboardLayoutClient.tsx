@@ -650,6 +650,7 @@ export default function DashboardLayoutClient({
             scans={dashboardData?.initialScans || 0}
             reviewCount={dashboardData?.reviewCount || 0}
             avgRating={dashboardData?.avgRating || 0}
+            growth={dashboardData?.growth}
           />}
         </div>
         <div style={{ display: activeTab === 'settings' ? 'block' : 'none' }}>

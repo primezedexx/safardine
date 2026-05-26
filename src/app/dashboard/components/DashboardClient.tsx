@@ -63,7 +63,7 @@ export default function DashboardClient({
   recentActivities,
   menuItems = [],
   chartData: initialChartData,
-  growth = { visitors: 18.6, orders: 16.3, revenue: 21.8, scans: 14.2 }
+  growth = { visitors: 0, orders: 0, revenue: 0, scans: 0 }
 }: DashboardClientProps) {
   const [dateFilter, setDateFilter] = useState('Last 7 Days')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -81,21 +81,12 @@ export default function DashboardClient({
   const [revenue, setRevenue] = useState(initialRevenue)
   const [activities, setActivities] = useState<any[]>(recentActivities)
   const [liveMenuItems, setLiveMenuItems] = useState<any[]>(menuItems)
-  const [dynamicChartData, setDynamicChartData] = useState(initialChartData || [
-    { day: 'May 10', value: 6000 },
-    { day: 'May 11', value: 8000 },
-    { day: 'May 12', value: 6200 },
-    { day: 'May 13', value: 9000 },
-    { day: 'May 14', value: 9800 },
-    { day: 'May 15', value: 12000 },
-    { day: 'May 16', value: 9400 }
-  ])
+  const [dynamicChartData, setDynamicChartData] = useState(initialChartData || [])
 
   const supabase = createClient()
   const [zoomLevel, setZoomLevel] = useState(100)
   const graphContainerRef = useRef<HTMLDivElement>(null)
-
-  const restaurantName = restaurant?.restaurant_name || 'Bella Italia'
+  const restaurantName = restaurant?.restaurant_name || 'Your Restaurant'
 
   // Fetch Chart Data on Filter Change
   useEffect(() => {
@@ -315,6 +306,9 @@ export default function DashboardClient({
 
   // Compute dynamic SVG path for chart
   const { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD } = useMemo(() => {
+    if (!dynamicChartData || dynamicChartData.length === 0) {
+      return { maxChartValue: 10, yAxisTicks: [10, 8, 6, 4, 2, 0], yCoords: [], chartWidth: 600, pathD: '', fillPathD: '' }
+    }
     const maxChartValue = Math.max(...dynamicChartData.map(d => d.value), 10)
     const yAxisTicks = [maxChartValue, maxChartValue * 0.8, maxChartValue * 0.6, maxChartValue * 0.4, maxChartValue * 0.2, 0]
     

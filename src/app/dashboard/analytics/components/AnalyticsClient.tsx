@@ -111,11 +111,7 @@ const RevenueChart = React.memo(function RevenueChart({ scansTimestamps, ordersR
 
   const chartData = useMemo(() => {
     if (!mounted) {
-      return [
-        { date: 'Apr 17', revenue: 0, visitors: 0, timestamp: 0 },
-        { date: 'Apr 21', revenue: 0, visitors: 0, timestamp: 1 },
-        { date: 'May 15', revenue: 0, visitors: 0, timestamp: 2 }
-      ]
+      return []
     }
 
     const data: { date: string, timestamp: number, revenue: number, visitors: number }[] = []
@@ -156,6 +152,14 @@ const RevenueChart = React.memo(function RevenueChart({ scansTimestamps, ordersR
   }, [mounted, filter, scansTimestamps, ordersRaw])
 
   const chartParams = useMemo(() => {
+    if (chartData.length === 0) {
+      return {
+        maxRevenue: 10, maxVisitors: 10, chartHeight: 280, chartWidth: 1200,
+        paddingLeft: 60, paddingRight: 40, paddingTop: 20, paddingBottom: 30,
+        xScale: () => 0, yScaleRevenue: () => 0, yScaleVisitors: () => 0,
+        revenuePath: '', visitorsPath: '', revenueAreaPath: '', xLabels: []
+      }
+    }
     const maxRevenueVal = Math.max(...chartData.map(d => d.revenue), 10)
     const maxVisitorsVal = Math.max(...chartData.map(d => d.visitors), 5)
     
@@ -607,7 +611,7 @@ export default function AnalyticsClient({ restaurantId, ...data }: AnalyticsData
   const hasBasic = hasAccessTo('analytics_basic')
   const hasAdvanced = hasAccessTo('analytics_advanced')
   
-  const growth = data.growth30 || { visitors: 18.6, orders: 16.3, revenue: 21.8, scans: 14.2 }
+  const growth = data.growth30 || { visitors: 0, orders: 0, revenue: 0, scans: 0 }
   
   const formatGrowth = useCallback((val: number) => {
     if (val === 0) return '0%';

@@ -33,6 +33,7 @@ interface ProfileClientProps {
   scans: number
   reviewCount: number
   avgRating: number
+  growth?: { visitors: number, orders: number, revenue: number, scans: number }
 }
 
 export default function ProfileClient({
@@ -44,7 +45,8 @@ export default function ProfileClient({
   revenue,
   scans,
   reviewCount,
-  avgRating
+  avgRating,
+  growth = { visitors: 0, orders: 0, revenue: 0, scans: 0 }
 }: ProfileClientProps) {
   const router = useRouter()
   const [copied, setCopied] = useState(false)
@@ -106,21 +108,25 @@ export default function ProfileClient({
   }
 
   // Fallbacks for display
-  const name = restaurant?.restaurant_name || 'Bella Italia'
-  const cuisine = restaurant?.restaurant_category || 'Italian'
-  const phone = restaurant?.restaurant_phone || '+91 98765 43210'
-  const email = restaurant?.restaurant_email || 'bella@bellaitalia.com'
-  const address = restaurant?.restaurant_address || 'Nashik, Maharashtra'
-  const openingHours = restaurant?.opening_hours || '10:00 AM – 11:00 PM'
+  const name = restaurant?.restaurant_name || 'Your Restaurant'
+  const cuisine = restaurant?.restaurant_category || 'Cuisine Not Set'
+  const phone = restaurant?.restaurant_phone || 'Not provided'
+  const email = restaurant?.restaurant_email || 'Not provided'
+  const address = restaurant?.restaurant_address || 'Not provided'
+  const openingHours = restaurant?.opening_hours || 'Not provided'
   
   // Cover and Logo with fallbacks
   const coverImage = restaurant?.restaurant_cover || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80'
   const logoImage = restaurant?.restaurant_logo || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=150&q=80'
+  const formatGrowth = (val: number) => {
+    if (val === 0) return '0%';
+    return val > 0 ? `+${val}%` : `${val}%`;
+  };
 
-  const displayVisitors = visitors > 0 ? visitors.toLocaleString() : '12,482'
-  const displayOrders = orders > 0 ? orders.toLocaleString() : '3,214'
-  const displayRevenue = revenue > 0 ? `₹${revenue.toLocaleString()}` : '₹2,40,980'
-  const displayScans = scans > 0 ? scans.toLocaleString() : '6,298'
+  const displayVisitors = visitors.toLocaleString()
+  const displayOrders = orders.toLocaleString()
+  const displayRevenue = `₹${revenue.toLocaleString('en-IN')}`
+  const displayScans = scans.toLocaleString()
 
   const socialLinks = restaurant?.social_links || {}
   const allPlatforms = [
@@ -308,10 +314,10 @@ export default function ProfileClient({
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'VISITORS', value: displayVisitors, icon: Users, change: '+7.08%' },
-                { label: 'ORDERS', value: displayOrders, icon: ShoppingBag, change: '+8.35%' },
-                { label: 'REVENUE', value: displayRevenue, icon: IndianRupee, change: '+6.29%' },
-                { label: 'SCANS', value: displayScans, icon: QrCode, change: '+14.2%' }
+                { label: 'VISITORS', value: displayVisitors, icon: Users, change: formatGrowth(growth.visitors) },
+                { label: 'ORDERS', value: displayOrders, icon: ShoppingBag, change: formatGrowth(growth.orders) },
+                { label: 'REVENUE', value: displayRevenue, icon: IndianRupee, change: formatGrowth(growth.revenue) },
+                { label: 'SCANS', value: displayScans, icon: QrCode, change: formatGrowth(growth.scans) }
               ].map((card, idx) => {
                 const Icon = card.icon
                 return (
@@ -333,8 +339,8 @@ export default function ProfileClient({
                     <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">
                       {card.label}
                     </span>
-                    <span className="text-[12px] font-bold text-[#22C55E] flex items-center gap-0.5">
-                      ↑ {card.change}
+                    <span className={`text-[12px] font-bold flex items-center gap-0.5 ${card.change.startsWith('-') ? 'text-red-500' : card.change === '0%' ? 'text-slate-400' : 'text-[#22C55E]'}`}>
+                      {card.change.startsWith('-') ? card.change.replace('-', '↓ ') : card.change.replace('+', '↑ ')}
                     </span>
                   </div>
                 )
