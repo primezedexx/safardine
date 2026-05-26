@@ -369,12 +369,21 @@ export default function DashboardClient({
     activity.title.toLowerCase().includes(activitySearchQuery.toLowerCase())
   ), [mappedActivityItems, activitySearchQuery])
 
+  // Dynamic greeting based on time
+  const [greeting, setGreeting] = useState('Welcome')
+  useEffect(() => {
+    const hour = new Date().getHours()
+    if (hour < 12) setGreeting('Good morning')
+    else if (hour < 18) setGreeting('Good afternoon')
+    else setGreeting('Good evening')
+  }, [])
+
   return (
     <div className="flex-grow flex flex-col justify-between select-none pb-4">
       {/* HERO SECTION */}
       <div className="text-left mt-2">
         <h1 className="text-[28px] font-bold tracking-tight text-[#111111] leading-tight">
-          Good evening, {restaurantName} 👋
+          {greeting}, {restaurantName} 👋
         </h1>
         <p className="text-[14px] text-[#7A7A7A] font-normal mt-1">
           Here's what's happening with your restaurant today.

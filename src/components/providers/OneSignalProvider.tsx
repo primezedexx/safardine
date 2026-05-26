@@ -20,17 +20,29 @@ export default function OneSignalProvider({
             return;
           }
           
-          await OneSignal.init({
+          const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          
+          // OneSignal strictly enforces the origin based on its dashboard configuration.
+          // Since it's locked to safardine.vercel.app, initializing it on localhost will crash the dev server.
+          if (isLocalhost) {
+            console.info("OneSignal: Bypassing initialization on localhost to prevent origin restriction errors.");
+            return;
+          }
+          
+          const initOptions: any = {
             appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
-            safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID,
             allowLocalhostAsSecureOrigin: true,
-            // We want to trigger the prompt manually later via our custom UI
-            // @ts-ignore - The react-onesignal types for this are sometimes overly strict
             autoRegister: false, 
             notifyButton: {
               enable: false,
-            } as any,
-          });
+            },
+          };
+
+          if (process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID) {
+            initOptions.safari_web_id = process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID;
+          }
+
+          await OneSignal.init(initOptions);
 
           // Log in the user to associate devices with their Supabase user ID
           if (userId) {
