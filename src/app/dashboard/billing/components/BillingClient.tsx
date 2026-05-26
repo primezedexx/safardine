@@ -543,9 +543,7 @@ export default function BillingClient({
                   </div>
                 </div>
 
-                <div className="p-3 bg-amber-50 border border-amber-100 text-amber-800 rounded-xl text-[10px] font-bold leading-normal mb-5">
-                  ⚠️ Test Mode: Use Razorpay's test credentials to simulate a payment.
-                </div>
+
 
                 <div className="space-y-4">
                   <button
