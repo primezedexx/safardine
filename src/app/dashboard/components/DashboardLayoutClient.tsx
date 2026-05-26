@@ -405,12 +405,12 @@ export default function DashboardLayoutClient({
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center group relative h-10 w-[120px]">
               <Image 
-                src="/logo.png" 
+                src="/logo.png?v=3" 
                 alt="Safardine" 
                 width={180}
                 height={60}
                 priority
-                className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200 mix-blend-multiply" 
+                className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
               />
             </Link>
           </div>
