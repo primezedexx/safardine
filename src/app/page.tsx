@@ -290,7 +290,7 @@ export default function Home() {
       <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-2xl bg-white/75 backdrop-blur-xl border border-slate-200/80 px-3.5 md:px-6 py-3 md:py-4 flex items-center justify-between shadow-lg shadow-slate-100/40">
         <Link href="/" className="flex items-center group h-12 relative">
           <img 
-            src="/logo-transparent.png" 
+            src="/logo-transparent.avif" 
             alt="Safar Dine Logo" 
             className="h-full w-auto object-contain select-none group-hover:scale-[1.05] transition-transform duration-200" 
           />
@@ -1042,7 +1042,7 @@ export default function Home() {
             <div className="col-span-2 space-y-4">
               <Link href="/" className="flex items-center group h-12 relative mb-6">
                 <img 
-                  src="/logo-transparent.png" 
+                  src="/logo-transparent.avif" 
                   alt="Safar Dine Logo" 
                   className="h-full w-auto object-contain group-hover:scale-[1.05] transition-all duration-300" 
                 />

@@ -8,7 +8,7 @@ export function Navbar() {
       {/* Brand logo */}
       <Link href="/" className="flex items-center group h-12 relative">
         <img 
-          src="/logo-transparent.png" 
+          src="/logo-transparent.avif" 
           alt="Safar Dine Logo" 
           className="h-full w-auto object-contain select-none group-hover:scale-[1.05] transition-transform duration-200" 
         />
