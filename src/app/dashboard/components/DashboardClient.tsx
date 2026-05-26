@@ -314,9 +314,9 @@ export default function DashboardClient({
   }, [])
 
   // Compute dynamic SVG path for chart
-  const { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels } = useMemo(() => {
+  const { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels, SVG_HEIGHT } = useMemo(() => {
     if (!dynamicChartData || dynamicChartData.length === 0) {
-      return { maxChartValue: 10, yAxisTicks: [10, 8, 6, 4, 2, 0], yCoords: [], chartWidth: 600, pathD: '', fillPathD: '', hasData: false, formattedLabels: [] }
+      return { maxChartValue: 10, yAxisTicks: [10, 8, 6, 4, 2, 0], yCoords: [], chartWidth: 600, pathD: '', fillPathD: '', hasData: false, formattedLabels: [], SVG_HEIGHT: isDesktop ? 380 : 220 }
     }
     
     const maxValue = Math.max(...dynamicChartData.map(d => d.value))
