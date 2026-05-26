@@ -483,7 +483,7 @@ export default function DashboardClient({
       {/* MAIN THREE-COLUMN CONTENT LAYOUT */}
       <div className="flex flex-col lg:flex-row gap-6 mt-6 items-stretch flex-1 mb-6">
         {/* COLUMN 1: Performance Overview (48% width) */}
-        <div className="w-full lg:w-[48%] flex flex-col">
+        <div className="w-full lg:w-[48%] flex flex-col lg:min-h-[500px]">
           <div className="bg-white border border-[#F1F1F1] rounded-[24px] p-5 pb-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)] text-left flex-1 flex flex-col justify-start">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -680,7 +680,7 @@ export default function DashboardClient({
         </div>
 
         {/* COLUMN 2: TOP PERFORMING DISHES (26% width) */}
-        <div className="w-full lg:w-[26%] flex">
+        <div className="w-full lg:w-[26%] flex lg:min-h-[500px]">
           <div className="bg-white border border-[#F1F1F1] rounded-[24px] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] text-left flex-1 flex flex-col justify-start overflow-hidden">
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -729,7 +729,7 @@ export default function DashboardClient({
         </div>
 
         {/* COLUMN 3: LATEST ACTIVITY (26% width) */}
-        <div className="w-full lg:w-[26%] flex">
+        <div className="w-full lg:w-[26%] flex lg:min-h-[500px]">
           <div className="bg-white border border-[#F1F1F1] rounded-[24px] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)] text-left flex-1 flex flex-col justify-start overflow-hidden">
             <div>
               <div className="flex items-center justify-between mb-4">
