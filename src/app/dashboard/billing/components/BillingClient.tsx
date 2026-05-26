@@ -188,7 +188,10 @@ export default function BillingClient({
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
-                restaurant_id: restaurant.id
+                restaurant_id: restaurant.id,
+                plan_name: plans[selectedPlan].name,
+                plan_amount: amountToCharge,
+                plan_duration_days: plans[selectedPlan].durationDays
               })
             })
 
