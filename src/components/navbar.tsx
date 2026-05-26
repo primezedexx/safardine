@@ -7,7 +7,7 @@ export function Navbar() {
       
       <Link href="/" className="flex items-center select-none group relative h-10 w-[120px]">
         <img 
-          src="/logo.png?v=3" 
+          src="/logo-transparent.png" 
           alt="Safar Dine Logo" 
           className="h-16 w-auto object-contain scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
         />

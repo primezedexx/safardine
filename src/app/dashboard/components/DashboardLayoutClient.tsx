@@ -405,7 +405,7 @@ export default function DashboardLayoutClient({
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center group relative h-10 w-[120px]">
               <Image 
-                src="/logo.png?v=3" 
+                src="/logo-transparent.png" 
                 alt="Safardine" 
                 width={180}
                 height={60}

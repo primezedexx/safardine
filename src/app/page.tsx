@@ -290,7 +290,7 @@ export default function Home() {
       <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-full bg-white/85 backdrop-blur-xl border border-slate-200/80 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between shadow-lg shadow-slate-100/40">
         <Link href="/" className="flex items-center select-none group relative h-10 w-[120px]">
           <Image 
-            src="/logo.png?v=3" 
+            src="/logo-transparent.png" 
             alt="Safar Dine Logo" 
             width={180}
             height={60}
@@ -1045,7 +1045,7 @@ export default function Home() {
             <div className="col-span-2 space-y-4">
               <Link href="/" className="flex items-center select-none group w-fit">
                 <Image 
-                  src="/logo.png?v=3" 
+                  src="/logo-transparent.png" 
                   alt="Safar Dine Logo" 
                   width={180}
                   height={60}
