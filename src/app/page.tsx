@@ -292,11 +292,11 @@ export default function Home() {
           <Image 
             src="/logo.png" 
             alt="Safar Dine Logo" 
-            width={160}
-            height={64}
+            width={140}
+            height={40}
             priority
             style={{ width: 'auto' }}
-            className="h-12 md:h-16 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
+            className="h-8 md:h-10 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
           />
         </Link>
         
@@ -1048,10 +1048,10 @@ export default function Home() {
                 <Image 
                   src="/logo.png" 
                   alt="Safar Dine Logo" 
-                  width={120}
-                  height={48}
+                  width={100}
+                  height={32}
                   style={{ width: 'auto' }}
-                  className="h-12 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
+                  className="h-8 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">
