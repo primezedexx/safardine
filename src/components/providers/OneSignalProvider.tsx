@@ -22,6 +22,7 @@ export default function OneSignalProvider({
           
           await OneSignal.init({
             appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
+            safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID,
             allowLocalhostAsSecureOrigin: true,
             // We want to trigger the prompt manually later via our custom UI
             // @ts-ignore - The react-onesignal types for this are sometimes overly strict
