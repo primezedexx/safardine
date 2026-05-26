@@ -302,40 +302,47 @@ export default function DashboardClient({
       change: formatGrowth(growth.scans),
       icon: QrCode,
     }
-  ]
-
-  // Compute dynamic SVG path for chart
-  const { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD } = useMemo(() => {
+   // Compute dynamic SVG path for chart
+  const { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels } = useMemo(() => {
     if (!dynamicChartData || dynamicChartData.length === 0) {
-      return { maxChartValue: 10, yAxisTicks: [10, 8, 6, 4, 2, 0], yCoords: [], chartWidth: 600, pathD: '', fillPathD: '' }
+      return { maxChartValue: 10, yAxisTicks: [10, 8, 6, 4, 2, 0], yCoords: [], chartWidth: 600, pathD: '', fillPathD: '', hasData: false, formattedLabels: [] }
     }
-    const maxChartValue = Math.max(...dynamicChartData.map(d => d.value), 10)
+    
+    const maxValue = Math.max(...dynamicChartData.map(d => d.value))
+    const hasData = maxValue > 0
+    const maxChartValue = hasData ? Math.ceil(maxValue * 1.15) : 5
+    
     const yAxisTicks = [maxChartValue, maxChartValue * 0.8, maxChartValue * 0.6, maxChartValue * 0.4, maxChartValue * 0.2, 0]
     
+    const SVG_HEIGHT = 220
     const getY = (val: number) => {
-      return 320 - (val / maxChartValue) * 280
+      return SVG_HEIGHT - (val / maxChartValue) * 200 // 20px top padding
     }
 
     const yCoords = dynamicChartData.map(d => getY(d.value))
-    const chartWidth = Math.max(600, (dynamicChartData.length - 1) * 100)
+    const chartWidth = Math.max(600, (dynamicChartData.length - 1) * 80) // Slightly reduced spacing
     
     let pathD = `M 0 ${yCoords[0]}`
     for (let i = 1; i < dynamicChartData.length; i++) {
-      const xPrev = (i - 1) * 100
-      const xCurr = i * 100
-      const xMid = xPrev + 50
+      const xPrev = (i - 1) * 80
+      const xCurr = i * 80
+      const xMid = xPrev + 40
       pathD += ` C ${xMid} ${yCoords[i-1]}, ${xMid} ${yCoords[i]}, ${xCurr} ${yCoords[i]}`
     }
 
-    const fillPathD = `${pathD} L ${chartWidth} 360 L 0 360 Z`
+    const fillPathD = `${pathD} L ${chartWidth} ${SVG_HEIGHT} L 0 ${SVG_HEIGHT} Z`
 
-    return { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD }
+    // Format labels: "May 20" -> "20 May"
+    const formattedLabels = dynamicChartData.map(d => {
+      const parts = d.day.split(' ')
+      return parts.length === 2 ? `${parts[1]} ${parts[0]}` : d.day
+    })
+
+    return { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels }
   }, [dynamicChartData])
 
   // Top Performing Dishes (Expanded list to support the scrollable "View all" search popup)
   const topDishes = useMemo(() => liveMenuItems.slice(0, 12).map(item => {
-    // Generate a pseudo-realistic growth percentage based on views for visual appeal,
-    // or just default if 0. (Using past logic approach: dynamic visual indicator)
     const growthNum = item.views ? Math.min(Math.round((item.views / 5) * 10) + 2, 85) : 0
     return {
       name: item.name,
@@ -405,7 +412,7 @@ export default function DashboardClient({
                     window.dispatchEvent(new CustomEvent('ordersModalToggle', { detail: true }))
                   }
                 }}
-                className={`bg-white border border-[#F1F1F1] p-5 rounded-[20px] flex items-center gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)] min-h-[96px] text-left flex-1 transition-all duration-300 group ${isOrders ? 'cursor-pointer hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)]' : ''}`}
+                className={`bg-white border border-[#F1F1F1] p-5 rounded-[24px] flex items-center gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)] min-h-[96px] text-left flex-1 transition-all duration-300 group ${isOrders ? 'cursor-pointer hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)]' : ''}`}
               >
                 <div className="w-12 h-12 rounded-[14px] bg-[#10B981]/10 text-[#10B981] flex items-center justify-center shrink-0">
                   <Icon className="w-5 h-5" />
@@ -444,7 +451,7 @@ export default function DashboardClient({
                     window.dispatchEvent(new CustomEvent('ordersModalToggle', { detail: true }))
                   }
                 }}
-                className={`bg-white border border-[#F1F1F1] p-5 rounded-[20px] flex items-center gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)] min-h-[96px] text-left flex-1 transition-all duration-300 group ${isOrders ? 'cursor-pointer hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)]' : ''}`}
+                className={`bg-white border border-[#F1F1F1] p-5 rounded-[24px] flex items-center gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)] min-h-[96px] text-left flex-1 transition-all duration-300 group ${isOrders ? 'cursor-pointer hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)]' : ''}`}
               >
                 <div className="w-12 h-12 rounded-[14px] bg-[#10B981]/10 text-[#10B981] flex items-center justify-center shrink-0">
                   <Icon className="w-5 h-5" />
@@ -472,108 +479,96 @@ export default function DashboardClient({
       </div>
 
       {/* MAIN THREE-COLUMN CONTENT LAYOUT */}
-      <div className="flex flex-col lg:flex-row gap-6 mt-6 items-stretch flex-1 overflow-hidden h-[620px] mb-6">
+      <div className="flex flex-col lg:flex-row gap-6 mt-6 items-stretch flex-1 mb-6">
         {/* COLUMN 1: Performance Overview (48% width) */}
-        <div className="w-full lg:w-[48%] flex">
-          <div className="bg-white border border-[#F1F1F1] rounded-[24px] p-5 pb-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] text-left flex-1 flex flex-col justify-between overflow-hidden">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-[15px] font-semibold text-[#111111] tracking-tight">
-                    Performance Overview
-                  </h2>
-                  <p className="text-[28px] font-bold text-[#111111] leading-none mt-1" data-lcp="true">
-                    {revenue ? `₹${Number(revenue).toLocaleString()}` : '--'}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2 relative">
-                  {/* Zoom Controls */}
-                  <div className="flex items-center bg-[#F8F8F8] border border-[#E5E5E5] rounded-full overflow-hidden">
-                    <button 
-                      onClick={() => setZoomLevel(p => Math.max(100, p - 50))}
-                      className="px-2.5 py-1 text-[#9A9A9A] hover:text-[#111111] hover:bg-[#F1F1F1] transition-colors"
-                    >
-                      -
-                    </button>
-                    <div className="w-[1px] h-3.5 bg-[#E5E5E5]"></div>
-                    <button 
-                      onClick={() => setZoomLevel(p => Math.min(500, p + 50))}
-                      className="px-2.5 py-1 text-[#9A9A9A] hover:text-[#111111] hover:bg-[#F1F1F1] transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  {/* Date Filter Dropdown */}
-                  <div className="relative">
-                    <button 
-                      onClick={() => setIsFilterOpen(!isFilterOpen)}
-                      className="flex items-center gap-1.5 px-3 py-1 border border-[#F1F1F1] hover:border-slate-300 rounded-full text-[12px] font-medium text-[#9A9A9A] bg-white transition-colors duration-200 whitespace-nowrap"
-                    >
-                      {dateFilter}
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                    </button>
-
-                    <AnimatePresence>
-                      {isFilterOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -5 }}
-                          className="absolute right-0 top-full mt-2 w-36 bg-white border border-[#F1F1F1] rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] z-50 py-1 overflow-hidden"
-                        >
-                          {['Last 7 Days', 'Last 14 Days', 'Last 30 Days'].map((option) => (
-                            <button
-                              key={option}
-                              onClick={() => {
-                                setDateFilter(option)
-                                setIsFilterOpen(false)
-                              }}
-                              className={`w-full text-left px-4 py-2 text-[12px] font-medium transition-colors ${
-                                dateFilter === option 
-                                  ? 'bg-[#10B981]/10 text-[#10B981]' 
-                                  : 'text-[#666666] hover:bg-slate-50 hover:text-[#111111]'
-                              }`}
-                            >
-                              {option}
-                            </button>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
+        <div className="w-full lg:w-[48%] flex flex-col">
+          <div className="bg-white border border-[#F1F1F1] rounded-[24px] p-5 pb-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)] text-left flex-1 flex flex-col justify-start">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h2 className="text-[16px] font-semibold text-[#111111] tracking-tight">
+                  Performance Overview
+                </h2>
+                <p className="text-[13px] text-[#9A9A9A] font-normal mt-0.5">
+                  Track restaurant activity
+                </p>
               </div>
 
-              {/* Custom SVG Line Chart with Y-Axis */}
-              <div className="flex h-[495px] w-full mt-4 select-none gap-3 relative">
+              <div className="relative">
+                <button 
+                  onClick={() => setIsFilterOpen(!isFilterOpen)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 border border-[#F1F1F1] hover:bg-[#F8F8F8] rounded-full text-[12px] font-medium text-[#666666] bg-white transition-colors duration-200 whitespace-nowrap shadow-[0_2px_4px_rgba(0,0,0,0.02)]"
+                >
+                  {dateFilter}
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+
+                <AnimatePresence>
+                  {isFilterOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="absolute right-0 top-full mt-2 w-36 bg-white border border-[#F1F1F1] rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] z-50 py-1 overflow-hidden"
+                    >
+                      {['Last 7 Days', 'Last 14 Days', 'Last 30 Days'].map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => {
+                            setDateFilter(option)
+                            setIsFilterOpen(false)
+                          }}
+                          className={`w-full text-left px-4 py-2 text-[12px] font-medium transition-colors ${
+                            dateFilter === option 
+                              ? 'bg-[#10B981]/10 text-[#10B981]' 
+                              : 'text-[#666666] hover:bg-slate-50 hover:text-[#111111]'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Custom SVG Line Chart with Y-Axis */}
+            {!hasData ? (
+              <div className="flex flex-col items-center justify-center flex-1 min-h-[220px] bg-[#F9FAFB] rounded-[16px] border border-dashed border-[#E5E7EB] mt-2">
+                <TrendingUp className="w-8 h-8 text-[#9CA3AF] mb-3 opacity-50" />
+                <p className="text-[14px] font-semibold text-[#4B5563]">No performance data yet</p>
+                <p className="text-[12px] text-[#9CA3AF] mt-1 text-center max-w-[250px] leading-relaxed">
+                  Data will appear as customers start interacting with your restaurant.
+                </p>
+              </div>
+            ) : (
+              <div className="flex h-[250px] w-full mt-2 select-none gap-3 relative">
                 {/* Y-Axis Labels */}
-                <div className="flex flex-col justify-between text-[11px] font-semibold text-[#9A9A9A] h-[470px] text-right w-8 select-none leading-none pt-1 pb-1 z-20 bg-white">
+                <div className="flex flex-col justify-between text-[10.5px] font-semibold text-[#9A9A9A] h-[220px] text-right w-8 select-none leading-none z-20 bg-white">
                   {yAxisTicks.map((tick, i) => (
-                    <span key={i}>{tick > 999 ? `${(tick/1000).toFixed(1).replace('.0', '')}K` : Math.round(tick)}</span>
+                    <span key={i} className="-mt-1.5">{tick > 999 ? `${(tick/1000).toFixed(1).replace('.0', '')}K` : Math.round(tick)}</span>
                   ))}
                 </div>
 
                 {/* Fixed Background Grid Lines */}
-                <div className="absolute left-11 right-0 top-0 bottom-[25px] flex flex-col justify-between pointer-events-none z-0">
+                <div className="absolute left-11 right-0 top-0 bottom-[30px] flex flex-col justify-between pointer-events-none z-0">
                   {yAxisTicks.map((_, i) => (
                     <div key={i} className="w-full border-t border-[#F1F1F1]" />
                   ))}
                 </div>
 
-                {/* SVG Graph Area (Scrollable & Zoomable) */}
+                {/* SVG Graph Area */}
                 <div 
                   ref={graphContainerRef}
-                  className="flex-1 relative h-[470px] overflow-x-auto overflow-y-hidden scrollbar-hide z-10"
+                  className="flex-1 relative h-[250px] overflow-x-auto overflow-y-hidden scrollbar-hide z-10"
                 >
                   <div 
-                    className="h-full relative flex flex-col transition-all duration-75 px-4"
+                    className="h-full relative flex flex-col transition-all duration-75"
                     style={{ width: `${zoomLevel}%`, minWidth: '100%' }}
                   >
                     <svg 
-                      className="w-full h-[360px] overflow-visible relative" 
-                      viewBox={`0 0 ${chartWidth} 360`}
+                      className="w-full h-[220px] overflow-visible relative pl-1" 
+                      viewBox={`0 0 ${chartWidth} 220`}
                       preserveAspectRatio="none"
                     >
                         <defs>
@@ -585,22 +580,22 @@ export default function DashboardClient({
 
                           {/* Soft green fill gradient */}
                           <linearGradient id="green-fill" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#10B981" stopOpacity="0.06" />
+                            <stop offset="0%" stopColor="#10B981" stopOpacity="0.08" />
                             <stop offset="100%" stopColor="#10B981" stopOpacity="0.00" />
                           </linearGradient>
                         </defs>
 
                         {/* Grid vertical lines */}
                         {dynamicChartData.map((d, idx) => {
-                          const x = idx * 100
+                          const x = idx * 80
                           return (
                             <line 
                               key={idx} 
                               x1={x} 
                               y1="0" 
                               x2={x} 
-                              y2="360" 
-                              stroke="#F1F1F1" 
+                              y2="220" 
+                              stroke="#F8F8F8" 
                               strokeWidth="1" 
                             />
                           )
@@ -611,7 +606,7 @@ export default function DashboardClient({
 
                         {/* Interactive Data Dots */}
                         {dynamicChartData.map((d, idx) => {
-                          const x = idx * 100
+                          const x = idx * 80
                           const y = yCoords[idx]
 
                           const isHovered = hoveredDataPoint === idx
@@ -632,7 +627,7 @@ export default function DashboardClient({
                               <circle 
                                 cx={x} 
                                 cy={y} 
-                                r={isHovered ? "4.5" : "3.5"} 
+                                r={isHovered ? "4" : "3"} 
                                 fill={isHovered ? "#10B981" : "#FFFFFF"} 
                                 stroke="#10B981" 
                                 strokeWidth="2" 
@@ -644,18 +639,18 @@ export default function DashboardClient({
                     </svg>
 
                     {/* Day Labels Under the Graph */}
-                    <div className="relative w-full h-4 mt-2 text-[11px] font-semibold text-[#9A9A9A] leading-none">
-                      {dynamicChartData.map((d, idx) => (
+                    <div className="relative w-full h-4 mt-3 text-[10.5px] font-semibold text-[#9A9A9A] leading-none">
+                      {formattedLabels.map((label, idx) => (
                         <span 
                           key={idx} 
                           className={`absolute text-center transform -translate-x-1/2 ${
-                            dynamicChartData.length > 7 && idx % Math.ceil(dynamicChartData.length / 7) !== 0 
+                            formattedLabels.length > 7 && idx % Math.ceil(formattedLabels.length / 7) !== 0 
                               ? 'hidden sm:inline-block' 
                               : 'inline-block'
                           }`}
-                          style={{ left: `${(idx / (dynamicChartData.length - 1)) * 100}%` }}
+                          style={{ left: `${(idx / (formattedLabels.length - 1)) * 100}%` }}
                         >
-                          {d.day}
+                          {label}
                         </span>
                       ))}
                     </div>
@@ -666,19 +661,19 @@ export default function DashboardClient({
                         className="absolute bg-[#111111] text-white text-[12px] font-medium px-2.5 py-1.5 rounded-lg shadow-md z-30 transition-all duration-150 pointer-events-none"
                         style={{
                           left: `${(hoveredDataPoint / (dynamicChartData.length - 1)) * 100}%`,
-                          top: `${(yCoords[hoveredDataPoint] * (470 / 360)) + 60}px`,
+                          top: `${(yCoords[hoveredDataPoint] * (250 / 220))}px`,
                           transform: 'translate(-50%, -100%)',
-                          marginTop: '-10px'
+                          marginTop: '-8px'
                         }}
                       >
-                        <p className="text-slate-400 font-medium mb-0.5">{dynamicChartData[hoveredDataPoint].day}</p>
+                        <p className="text-slate-400 font-medium mb-0.5">{formattedLabels[hoveredDataPoint]}</p>
                         <p className="text-[#10B981] font-semibold">{dynamicChartData[hoveredDataPoint].value.toLocaleString()} visitors</p>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
