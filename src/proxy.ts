@@ -200,12 +200,23 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/settings') || 
     pathname.startsWith('/restaurant-setup')
 
+  const isAuthRoute = 
+    pathname === '/login' || 
+    pathname === '/signup' || 
+    pathname === '/'
+
   if (!user && isProtectedRoute) {
     // SECURITY MONITORING: Log unauthorized access attempt
     console.warn(`🔒 [UNAUTHORIZED ACCESS BLOCKED] Guest from IP ${ip} tried to access protected route "${pathname}"`)
     
     const url = request.nextUrl.clone()
     url.pathname = '/login'
+    return applySecurityHeaders(NextResponse.redirect(url))
+  }
+
+  if (user && isAuthRoute) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
     return applySecurityHeaders(NextResponse.redirect(url))
   }
 
