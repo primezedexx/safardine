@@ -302,7 +302,9 @@ export default function DashboardClient({
       change: formatGrowth(growth.scans),
       icon: QrCode,
     }
-   // Compute dynamic SVG path for chart
+  ]
+
+  // Compute dynamic SVG path for chart
   const { maxChartValue, yAxisTicks, yCoords, chartWidth, pathD, fillPathD, hasData, formattedLabels } = useMemo(() => {
     if (!dynamicChartData || dynamicChartData.length === 0) {
       return { maxChartValue: 10, yAxisTicks: [10, 8, 6, 4, 2, 0], yCoords: [], chartWidth: 600, pathD: '', fillPathD: '', hasData: false, formattedLabels: [] }
