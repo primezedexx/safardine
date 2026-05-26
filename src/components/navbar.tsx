@@ -10,7 +10,7 @@ export function Navbar() {
         <img 
           src="/logo-transparent.avif" 
           alt="Safar Dine Logo" 
-          className="h-full w-auto object-contain select-none group-hover:scale-[1.05] transition-transform duration-200" 
+          className="h-full w-auto object-contain select-none scale-[1.4] group-hover:scale-[1.45] transition-transform duration-200" 
         />
       </Link>
 

@@ -292,7 +292,7 @@ export default function Home() {
           <img 
             src="/logo-transparent.avif" 
             alt="Safar Dine Logo" 
-            className="h-full w-auto object-contain select-none group-hover:scale-[1.05] transition-transform duration-200" 
+            className="h-full w-auto object-contain select-none scale-[1.4] group-hover:scale-[1.45] transition-transform duration-200" 
           />
         </Link>
         
@@ -1044,7 +1044,7 @@ export default function Home() {
                 <img 
                   src="/logo-transparent.avif" 
                   alt="Safar Dine Logo" 
-                  className="h-full w-auto object-contain group-hover:scale-[1.05] transition-all duration-300" 
+                  className="h-full w-auto object-contain scale-[1.4] group-hover:scale-[1.45] transition-all duration-300 origin-left" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">
