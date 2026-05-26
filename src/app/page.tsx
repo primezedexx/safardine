@@ -295,7 +295,7 @@ export default function Home() {
             width={180}
             height={60}
             priority
-            className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
+            className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200 mix-blend-multiply" 
           />
         </Link>
         
@@ -1049,7 +1049,7 @@ export default function Home() {
                   alt="Safar Dine Logo" 
                   width={180}
                   height={60}
-                  className="h-16 w-auto object-contain mb-6 scale-[1.35] origin-left grayscale hover:grayscale-0 transition-all duration-300" 
+                  className="h-16 w-auto object-contain mb-6 scale-[1.35] origin-left grayscale hover:grayscale-0 transition-all duration-300 mix-blend-multiply" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">

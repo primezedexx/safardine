@@ -410,7 +410,7 @@ export default function DashboardLayoutClient({
                 width={180}
                 height={60}
                 priority
-                className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200" 
+                className="w-auto h-16 object-contain select-none scale-[1.35] origin-left group-hover:scale-[1.4] transition-transform duration-200 mix-blend-multiply" 
               />
             </Link>
           </div>
