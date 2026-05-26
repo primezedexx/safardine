@@ -403,14 +403,14 @@ export default function DashboardLayoutClient({
         <div className="max-w-[1440px] w-full h-full mx-auto px-8 flex items-center justify-between">
           {/* Left: Safardine Logo (Cropped and Scaled to make typography prominent) */}
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="flex items-center group h-12 w-[150px] relative overflow-hidden">
+            <Link href="/dashboard" className="flex items-center group h-10 w-[130px] relative overflow-hidden">
               <Image 
                 src="/logo.png" 
                 alt="Safardine" 
-                width={210}
-                height={140}
+                width={180}
+                height={120}
                 priority
-                className="absolute left-[-30px] top-[-44px] w-[210px] max-w-none h-[140px] object-contain select-none" 
+                className="absolute left-[-26px] top-[-38px] w-[180px] max-w-none h-[120px] object-contain select-none" 
               />
             </Link>
           </div>
