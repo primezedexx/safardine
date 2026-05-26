@@ -287,15 +287,16 @@ export default function Home() {
       </div>
 
       {/* Floating Premium Glassmorphic Header */}
-      <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-full bg-white/85 backdrop-blur-xl border border-slate-200/80 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between shadow-lg shadow-slate-100/40">
-        <Link href="/" className="flex items-center group h-12 w-[160px] relative overflow-hidden">
+      <header className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[92%] sm:w-[90%] max-w-5xl z-50 rounded-2xl bg-white/75 backdrop-blur-xl border border-slate-200/80 px-3.5 md:px-6 py-3 md:py-4 flex items-center justify-between shadow-lg shadow-slate-100/40">
+        <Link href="/" className="flex items-center select-none group">
           <Image 
-            src="/logo-transparent.png" 
+            src="/logo.png" 
             alt="Safar Dine Logo" 
-            width={216}
-            height={144}
+            width={160}
+            height={64}
             priority
-            className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain select-none group-hover:scale-[1.02] transition-transform duration-200" 
+            style={{ width: 'auto' }}
+            className="h-12 md:h-16 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
           />
         </Link>
         
@@ -1043,13 +1044,14 @@ export default function Home() {
             
             {/* Column 1: Info */}
             <div className="col-span-2 space-y-4">
-              <Link href="/" className="flex items-center group h-12 w-[160px] relative overflow-hidden mb-6">
+              <Link href="/" className="flex items-center select-none group w-fit">
                 <Image 
-                  src="/logo-transparent.png" 
+                  src="/logo.png" 
                   alt="Safar Dine Logo" 
-                  width={216}
-                  height={144}
-                  className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain grayscale hover:grayscale-0 transition-all duration-300" 
+                  width={120}
+                  height={48}
+                  style={{ width: 'auto' }}
+                  className="h-12 w-auto object-contain group-hover:scale-[1.02] transition-transform duration-200" 
                 />
               </Link>
               <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-semibold">

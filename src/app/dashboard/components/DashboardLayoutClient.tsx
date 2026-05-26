@@ -398,19 +398,19 @@ export default function DashboardLayoutClient({
       {/* Trial Countdown Banner */}
       {trialBanner}
 
-      {/* TOP HEADER (Locked to height 72px) - Pure White background, no shadow, no border */}
-      <header className="sticky top-0 z-40 bg-white h-16 shrink-0 select-none border-b border-gray-50">
-        <div className="max-w-[1440px] w-full h-full mx-auto px-6 md:px-8 flex items-center justify-between">
-          {/* Left: Safardine Logo */}
+      {/* TOP HEADER (Locked to height 60px) - Pure White background, no shadow, no border */}
+      <header className="sticky top-0 z-40 bg-white h-[60px] shrink-0 select-none">
+        <div className="max-w-[1440px] w-full h-full mx-auto px-8 flex items-center justify-between">
+          {/* Left: Safardine Logo (Cropped and Scaled to make typography prominent) */}
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="flex items-center group h-12 w-[160px] relative overflow-hidden">
+            <Link href="/dashboard" className="flex items-center group h-10 w-[130px] relative overflow-hidden">
               <Image 
-                src="/logo-transparent.png" 
+                src="/logo.png" 
                 alt="Safardine" 
-                width={216}
-                height={144}
+                width={180}
+                height={120}
                 priority
-                className="absolute left-[-31px] top-[-45px] w-[216px] max-w-none h-[144px] object-contain select-none group-hover:scale-[1.02] transition-transform duration-200" 
+                className="absolute left-[-26px] top-[-38px] w-[180px] max-w-none h-[120px] object-contain select-none" 
               />
             </Link>
           </div>
