@@ -400,7 +400,7 @@ export default function DashboardLayoutClient({
 
       {/* TOP HEADER (Locked to height 72px) - Pure White background, no shadow, no border */}
       <header className="sticky top-0 z-40 bg-white  h-[72px] shrink-0 select-none">
-        <div className="max-w-[1440px] w-full h-full mx-auto px-8 flex items-center justify-between">
+        <div className="max-w-[1440px] w-full h-full mx-auto px-4 md:px-8 flex items-center justify-between">
           {/* Left: Safardine Logo (Cropped and Scaled to make typography prominent) */}
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center group h-10 w-[130px] relative overflow-hidden">
@@ -605,7 +605,7 @@ export default function DashboardLayoutClient({
 
       {/* MAIN CONTAINER (Single-page view optimized, padded at bottom for bar) */}
       <main 
-        className="max-w-[1440px] w-full mx-auto px-8 pt-6 flex-1 flex flex-col overflow-x-hidden"
+        className="max-w-[1440px] w-full mx-auto px-4 md:px-8 pt-6 flex-1 flex flex-col overflow-x-hidden"
         style={{ overflowY: 'auto', height: 'calc(100vh - 72px)', paddingBottom: '112px' }}
       >
         {/* SPA IndexedStack container - keeps tabs alive */}
