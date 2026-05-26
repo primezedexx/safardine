@@ -15,6 +15,7 @@ import {
   Tag,
   UserPlus,
   Lock,
+  Utensils,
 } from 'lucide-react'
 import { useSubscription } from '../../context/SubscriptionContext'
 
@@ -470,56 +471,91 @@ const PeakHours = React.memo(function PeakHours({ ordersTimestamps }: { ordersTi
   )
 })
 
-// ─── DeviceUsage ─────────────────────────────────────────────────────
-const DeviceUsage = React.memo(function DeviceUsage({ totalVisits }: { totalVisits: number }) {
-  const { deviceData, circumference } = useMemo(() => {
-    const mobileCount = Math.floor(totalVisits * 0.72)
-    const desktopCount = Math.floor(totalVisits * 0.20)
-    const tabletCount = totalVisits - mobileCount - desktopCount
+// ─── TopCategories (Replaces DeviceUsage) ────────────────────────────
+const TopCategories = React.memo(function TopCategories({ menuItems = [] }: { menuItems?: any[] }) {
+  const { categoryData, circumference, hasData } = useMemo(() => {
+    const viewsByCategory: Record<string, number> = {}
+    let totalViews = 0
 
-    const mPct = totalVisits > 0 ? Math.round((mobileCount / totalVisits) * 100) : 72
-    const dPct = totalVisits > 0 ? Math.round((desktopCount / totalVisits) * 100) : 20
-    const tPct = totalVisits > 0 ? 100 - mPct - dPct : 8
+    menuItems.forEach(item => {
+      const cat = item.category || 'Other'
+      const views = item.views || 0
+      viewsByCategory[cat] = (viewsByCategory[cat] || 0) + views
+      totalViews += views
+    })
+
+    const sortedCats = Object.entries(viewsByCategory)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+
+    // Fallback if no data
+    if (totalViews === 0 || sortedCats.length === 0) {
+      return {
+        categoryData: [
+          { label: 'Starters', percentage: 45, color: '#10b981' },
+          { label: 'Mains', percentage: 35, color: '#34d399' },
+          { label: 'Desserts', percentage: 20, color: '#a7f3d0' },
+        ],
+        circumference: 2 * Math.PI * 45,
+        hasData: false
+      }
+    }
+
+    const colors = ['#10b981', '#34d399', '#a7f3d0']
+    
+    // Convert top 3 to percentage of the top 3 total
+    const top3Total = sortedCats.reduce((acc, curr) => acc + curr[1], 0)
+    
+    const categoryData = sortedCats.map((cat, idx) => ({
+      label: cat[0].length > 12 ? cat[0].substring(0, 12) + '...' : cat[0],
+      percentage: Math.round((cat[1] / top3Total) * 100),
+      color: colors[idx % colors.length]
+    }))
+
+    // ensure it sums to exactly 100
+    const sum = categoryData.reduce((acc, curr) => acc + curr.percentage, 0)
+    if (sum !== 100 && categoryData.length > 0) {
+      categoryData[0].percentage += (100 - sum)
+    }
 
     return {
-      deviceData: [
-        { label: 'Mobile', percentage: mPct, color: '#10b981' },
-        { label: 'Desktop', percentage: dPct, color: '#34d399' },
-        { label: 'Tablet', percentage: tPct, color: '#a7f3d0' },
-      ],
-      circumference: 2 * Math.PI * 45
+      categoryData,
+      circumference: 2 * Math.PI * 45,
+      hasData: true
     }
-  }, [totalVisits])
+  }, [menuItems])
 
   let offset = 0
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col h-full">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col h-full relative">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <Smartphone className="w-5 h-5 text-emerald-500" />
-          <h3 className="text-sm font-semibold text-gray-800">Device Usage</h3>
+          <Utensils className="w-5 h-5 text-emerald-500" />
+          <h3 className="text-sm font-semibold text-gray-800">Top Categories</h3>
         </div>
-        <button className="flex items-center gap-1 text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 cursor-pointer">
-          All Devices
-          <ChevronDown className="w-3 h-3" />
-        </button>
       </div>
 
-      <div className="flex items-center justify-center gap-6 flex-1">
+      {!hasData && (
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-2xl">
+           <p className="text-xs font-semibold text-gray-500 mt-6">Not enough data yet</p>
+        </div>
+      )}
+
+      <div className={`flex items-center justify-center gap-6 flex-1 ${!hasData ? 'opacity-30' : ''}`}>
         <div className="relative w-32 h-32">
           <svg width="128" height="128" viewBox="0 0 128 128">
             <circle cx="64" cy="64" r="45" fill="none" stroke="#f3f4f6" strokeWidth="18" />
-            {deviceData.map((device) => {
-              const dashLength = (device.percentage / 100) * circumference
+            {categoryData.map((cat) => {
+              const dashLength = (cat.percentage / 100) * circumference
               const segment = (
                 <circle
-                  key={device.label}
+                  key={cat.label}
                   cx="64"
                   cy="64"
                   r="45"
                   fill="none"
-                  stroke={device.color}
+                  stroke={cat.color}
                   strokeWidth="18"
                   strokeDasharray={`${dashLength} ${circumference - dashLength}`}
                   strokeDashoffset={-offset}
@@ -535,11 +571,11 @@ const DeviceUsage = React.memo(function DeviceUsage({ totalVisits }: { totalVisi
         </div>
 
         <div className="space-y-3">
-          {deviceData.map((device) => (
-            <div key={device.label} className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: device.color }} />
-              <span className="text-xs text-gray-600 w-14">{device.label}</span>
-              <span className="text-xs font-semibold text-gray-800">{device.percentage}%</span>
+          {categoryData.map((cat) => (
+            <div key={cat.label} className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+              <span className="text-xs text-gray-600 w-16 truncate">{cat.label}</span>
+              <span className="text-xs font-semibold text-gray-800">{cat.percentage}%</span>
             </div>
           ))}
         </div>
@@ -707,9 +743,9 @@ export default function AnalyticsClient({ restaurantId, ...data }: AnalyticsData
             {!hasAdvanced && (
               <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[4px] rounded-2xl flex flex-col items-center justify-center p-6 border border-gray-100/50">
                 <Lock className="w-6 h-6 text-slate-400 mb-2" />
-                <h3 className="text-sm font-bold text-slate-800 mb-1 text-center leading-tight">Device Usage Locked</h3>
+                <h3 className="text-sm font-bold text-slate-800 mb-1 text-center leading-tight">Top Categories Locked</h3>
                 <button 
-                  onClick={() => triggerUpgrade('Device Usage', 'analytics_advanced')}
+                  onClick={() => triggerUpgrade('Top Categories', 'analytics_advanced')}
                   className="mt-2 px-4 py-2 bg-[#F47B3E] hover:bg-[#e06b30] text-white text-xs font-bold rounded-lg transition-all cursor-pointer"
                 >
                   Upgrade
@@ -717,7 +753,7 @@ export default function AnalyticsClient({ restaurantId, ...data }: AnalyticsData
               </div>
             )}
             <div className={`h-full ${!hasAdvanced ? 'opacity-30 pointer-events-none select-none blur-[2px]' : ''}`}>
-              <DeviceUsage totalVisits={data.visitsCount} />
+              <TopCategories menuItems={(data as any).menuItems} />
             </div>
           </div>
         </LazyRender>
