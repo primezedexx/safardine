@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://safardine.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://safardine.vercel.app';
 
   // Core public routes that we want search engines to index
   const routes = [
