@@ -9,6 +9,9 @@ const playfairDisplay = Playfair_Display({ subsets: ["latin"], variable: "--font
 export const metadata: Metadata = {
   title: "Safar Dine | AI-Powered QR Menus",
   description: "Transform restaurant menus into AI-powered experiences with Safar Dine.",
+  verification: {
+    google: "wW7GB7MmkWDTAJ_b6nDndukavU48PW2EdFZtiUZukrM",
+  },
 };
 
 export default async function RootLayout({
