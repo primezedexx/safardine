@@ -28,9 +28,6 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   compress: true,
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
   experimental: {
     serverActions: { bodySizeLimit: "6mb" },
     optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
