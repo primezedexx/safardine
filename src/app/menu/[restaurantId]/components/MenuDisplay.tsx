@@ -799,7 +799,7 @@ export default function MenuDisplay({ restaurant, initialItems }: { restaurant: 
           <div className="mt-auto bg-slate-50 border border-slate-200/60 p-4.5 rounded-2xl space-y-2 select-none">
             <div className="flex gap-2 items-start text-[10px] text-slate-400 font-bold leading-normal">
               <span className="text-orange-500 text-base leading-none shrink-0">•</span>
-              <span>All prices are in USD and include taxes.</span>
+              <span>All prices are in USD.</span>
             </div>
             <div className="flex gap-2 items-start text-[10px] text-slate-400 font-bold leading-normal">
               <span className="text-red-500 text-base leading-none shrink-0">•</span>
@@ -894,7 +894,7 @@ export default function MenuDisplay({ restaurant, initialItems }: { restaurant: 
 
               {/* Mobile Allergen notices */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/50 text-[10px] text-slate-400 font-bold leading-normal">
-                If you have food allergies, please inform our restaurant staff before completing order. All prices include GST.
+                If you have food allergies, please inform our restaurant staff before completing order.
               </div>
 
             </motion.div>

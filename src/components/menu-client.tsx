@@ -320,8 +320,8 @@ export function MenuClient({ restaurant, menuItems }: MenuClientProps) {
   }).filter(Boolean) as any[]
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  const taxes = subtotal > 0 ? 42 : 0
-  const total = subtotal + taxes
+  const taxes = 0
+  const total = subtotal
 
   // Automatic Cart Expand / Collapse trigger on item count changes
   useEffect(() => {
@@ -963,10 +963,7 @@ export function MenuClient({ restaurant, menuItems }: MenuClientProps) {
                     <span>Subtotal</span>
                     <span className="font-semibold text-slate-800">{formatPrice(subtotal)}</span>
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-                    <span>Taxes & Charges</span>
-                    <span className="font-semibold text-slate-800">{formatPrice(taxes)}</span>
-                  </div>
+
                   <div className="flex items-center justify-between pt-2 border-t border-gray-200/50">
                     <span className="text-[13px] font-semibold text-slate-800">Total Amount</span>
                     <span className="text-[15px] font-semibold text-[#FF5722]">{formatPrice(total)}</span>
@@ -1129,10 +1126,7 @@ export function MenuClient({ restaurant, menuItems }: MenuClientProps) {
                     <span>Subtotal</span>
                     <span className="font-semibold text-slate-800">{formatPrice(subtotal)}</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span>Taxes & Charges</span>
-                    <span className="font-semibold text-slate-800">{formatPrice(taxes)}</span>
-                  </div>
+
                   <div className="flex items-center justify-between pt-2 border-t border-gray-200">
                     <span className="text-sm font-semibold text-slate-800">Total</span>
                     <span className="text-base font-semibold text-[#FF5722]">{formatPrice(total)}</span>
@@ -1402,7 +1396,7 @@ export function MenuClient({ restaurant, menuItems }: MenuClientProps) {
                 </div>
                 <div className="flex flex-col px-1">
                   <span className="text-white text-2xl font-bold">{formatPrice(selectedItem.price)}</span>
-                  <span className="text-[#8E8E93] text-[10px]">Inclusive of taxes</span>
+
                 </div>
               </div>
 
