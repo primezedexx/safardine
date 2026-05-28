@@ -773,7 +773,7 @@ export default function DashboardClient({
                           <h4 className="text-[13px] font-semibold text-[#111111] leading-tight">
                             {activity.title}
                           </h4>
-                          <p className="text-[12px] text-[#9A9A9A] leading-tight mt-0.5">
+                          <p suppressHydrationWarning className="text-[12px] text-[#9A9A9A] leading-tight mt-0.5">
                             {activity.time}
                           </p>
                         </div>
