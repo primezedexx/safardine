@@ -223,14 +223,14 @@ export default function DashboardLayoutClient({
         // Create a pleasant double-chime "ding-ding" effect
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-        oscillator.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.1); // A5
+        oscillator.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.15); // A5
 
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.02);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        gainNode.gain.linearRampToValueAtTime(0.9, audioCtx.currentTime + 0.05); // LOUDER (was 0.2)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5); // LONGER (was 0.3)
 
         oscillator.start(audioCtx.currentTime);
-        oscillator.stop(audioCtx.currentTime + 0.3);
+        oscillator.stop(audioCtx.currentTime + 0.5);
       } catch (e) {
         console.warn('Audio playback blocked or not supported');
       }
@@ -255,6 +255,7 @@ export default function DashboardLayoutClient({
           }
           setNotifications(prev => [newNotif, ...prev])
           playNotificationSound() // Play the sound!
+          router.refresh() // Silently refresh server data for Analytics & Orders
         }
       )
       .on(
@@ -271,8 +272,23 @@ export default function DashboardLayoutClient({
       )
       .subscribe()
 
+    // Secondary channel to force data sync if notifications are explicitly disabled by the user
+    const dataChannel = supabase
+      .channel(`dashboard-data-${restaurant.id}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+        if (String(payload.new.restaurant_id) === String(restaurant.id)) router.refresh();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, (payload) => {
+        if (String(payload.new.restaurant_id) === String(restaurant.id)) router.refresh();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'restaurant_scans' }, (payload) => {
+        if (String(payload.new.restaurant_id) === String(restaurant.id)) router.refresh();
+      })
+      .subscribe()
+
     return () => {
       supabase.removeChannel(channel)
+      supabase.removeChannel(dataChannel)
     }
   }, [restaurant?.id])
 

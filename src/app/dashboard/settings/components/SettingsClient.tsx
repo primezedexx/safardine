@@ -262,53 +262,25 @@ export default function SettingsClient({ restaurant }: SettingsClientProps) {
 
   // Save Notifications
   const handleToggleNotification = async (key: string, value: boolean) => {
-    // Optimistic UI updates
+    if (!profile) return
+
+    // Update local state immediately for snappy UI
     if (key === 'orderAlerts') setOrderAlerts(value)
     if (key === 'scanAlerts') setScanAlerts(value)
     if (key === 'reservationAlerts') setReservationAlerts(value)
     if (key === 'marketingUpdates') setMarketingUpdates(value)
 
-    // If turning on any alert, ensure we request permission
-    if (value && typeof window !== "undefined") {
-      try {
-        if ("Notification" in window) {
-          if (Notification.permission === "default") {
-            const perm = await Notification.requestPermission();
-            if (perm === "granted" && OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-              await OneSignal.Notifications.requestPermission();
-            }
-          } else if (Notification.permission === "granted") {
-            // It's already granted, just make sure OneSignal knows
-            if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-              await OneSignal.Notifications.requestPermission();
-            }
-            alert("Chrome is already allowing notifications for this site. Push alerts are now ON.");
-          } else if (Notification.permission === "denied") {
-            alert("Notifications are blocked in your Chrome settings. Please click the lock icon in your URL bar, change Notifications to 'Allow', and refresh the page.");
-          }
-        } else if (OneSignal && OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-           await OneSignal.Notifications.requestPermission();
-        }
-      } catch (err) {
-        console.error("Error requesting notification permission:", err);
+    setProfile((prev: any) => {
+      const currentLinks = prev?.social_links || {}
+      const currentNotifs = currentLinks._notifications || {}
+      
+      const newSettings = {
+        ...currentNotifs,
+        [key]: value
       }
-    } else if (!value) {
-      // If turning off
-      if ("Notification" in window && Notification.permission === "granted") {
-         setToastMessage('Push alerts are now disabled.');
-      }
-    }
 
-    const newSettings = {
-      orderAlerts: key === 'orderAlerts' ? value : orderAlerts,
-      scanAlerts: key === 'scanAlerts' ? value : scanAlerts,
-      reservationAlerts: key === 'reservationAlerts' ? value : reservationAlerts,
-      marketingUpdates: key === 'marketingUpdates' ? value : marketingUpdates
-    }
-
-    try {
-      const currentLinks = profile?.social_links || {}
-      await supabase
+      // Fire and forget the database update with the correct payload
+      supabase
         .from('restaurant_profiles')
         .update({
           social_links: {
@@ -317,30 +289,21 @@ export default function SettingsClient({ restaurant }: SettingsClientProps) {
           }
         })
         .eq('id', profile.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase update error:", error)
+            alert(`Database Save Error: ${error.message}`)
+          }
+        })
 
-      // Update the local profile state so it doesn't revert if the user navigates between tabs without refreshing
-      setProfile((prev: any) => ({
+      return {
         ...prev,
         social_links: {
           ...currentLinks,
           _notifications: newSettings
         }
-      }))
-
-      // Sync with OneSignal if initialized
-      if (typeof window !== "undefined" && OneSignal.User) {
-        OneSignal.User.addTag(key, value.toString());
-        if (key === 'orderAlerts') {
-          if (value) {
-            OneSignal.User.PushSubscription.optIn();
-          } else {
-            OneSignal.User.PushSubscription.optOut();
-          }
-        }
       }
-    } catch (e) {
-      console.error('Failed to update notifications', e)
-    }
+    })
   }
 
   // Logout trigger
