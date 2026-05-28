@@ -40,7 +40,7 @@ export default function NotificationPromptModal() {
         await OneSignal.Slidedown.promptPush();
       } else {
         // Fallback for older versions of react-onesignal
-        await OneSignal.registerForPushNotifications();
+        await (OneSignal as any).registerForPushNotifications();
       }
     } catch (error) {
       console.error("Error prompting push:", error);
