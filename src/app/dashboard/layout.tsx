@@ -22,20 +22,12 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  const getCachedRestaurant = unstable_cache(
-    async (userId: string) => {
-      const { data } = await supabase
-        .from('restaurant_profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle()
-      return data
-    },
-    [`restaurant-profile-${user.id}`],
-    { revalidate: 30, tags: [`restaurant-${user.id}`] }
-  )
-
-  const restaurant = await getCachedRestaurant(user.id)
+  // Fetch restaurant profile directly to ensure fresh data on manual refresh
+  const { data: restaurant } = await supabase
+    .from('restaurant_profiles')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle()
 
   const cookieStore = await cookies()
   const fallbackSubscribed = restaurant?.id 

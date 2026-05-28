@@ -859,7 +859,7 @@ export default function MenuClient({ items, currencySymbol, restaurantId }: Menu
       </div> {/* End print:hidden wrapper */}
 
       {/* ─── Add Menu Item Popup Modal ────────────────────────────────── */}
-      <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-slate-900/60 backdrop-blur-md overflow-y-auto transition-opacity duration-200 ${isNewModalOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 md:p-10 bg-slate-900/60 backdrop-blur-md overflow-y-auto transition-opacity duration-200 ${isNewModalOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         {/* Backdrop Click Close */}
         <div className="absolute inset-0 cursor-default" onClick={() => setIsNewModalOpen(false)} />
         
@@ -875,7 +875,7 @@ export default function MenuClient({ items, currencySymbol, restaurantId }: Menu
       </div>
 
       {/* ─── Edit Menu Item Popup Modal ───────────────────────────────── */}
-      <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-slate-900/60 backdrop-blur-md overflow-y-auto transition-opacity duration-200 ${editItemId !== null ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 md:p-10 bg-slate-900/60 backdrop-blur-md overflow-y-auto transition-opacity duration-200 ${editItemId !== null ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         {/* Backdrop Click Close */}
         <div className="absolute inset-0 cursor-default" onClick={() => setEditItemId(null)} />
         
@@ -896,7 +896,7 @@ export default function MenuClient({ items, currencySymbol, restaurantId }: Menu
       </div>
 
       {/* ─── Delete Menu Item Popup Modal ─────────────────────────────── */}
-      <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-slate-900/60 backdrop-blur-md transition-opacity duration-200 ${itemToDelete ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 md:p-10 bg-slate-900/60 backdrop-blur-md transition-opacity duration-200 ${itemToDelete ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         {/* Backdrop Click Close */}
         <div className="absolute inset-0 cursor-default" onClick={() => setItemToDelete(null)} />
         

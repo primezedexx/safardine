@@ -16,7 +16,6 @@ import OrdersHistoryModal from './OrdersHistoryModal'
 import DashboardClient from './DashboardClient'
 import dynamic from 'next/dynamic'
 import OneSignalProvider from '@/components/providers/OneSignalProvider'
-import NotificationPromptModal from '@/components/ui/NotificationPromptModal'
 
 // TabSkeleton — matches the height of the real content to prevent CLS
 const TabSkeleton = () => (
@@ -238,16 +237,18 @@ export default function DashboardLayoutClient({
     }
 
     const channel = supabase
-      .channel('schema-db-changes')
+      .channel(`notifications-${restaurant.id}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'notifications',
-          filter: `restaurant_id=eq.${restaurant.id}`
+          table: 'notifications'
         },
         (payload) => {
+          // Use String() to prevent strict equality failures if one is an integer and the other is a string
+          if (String(payload.new.restaurant_id) !== String(restaurant.id)) return;
+
           const newNotif = {
             ...payload.new,
             time: 'just now'
@@ -261,11 +262,11 @@ export default function DashboardLayoutClient({
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'notifications',
-          filter: `restaurant_id=eq.${restaurant.id}`
+          table: 'notifications'
         },
         (payload) => {
-          setNotifications(prev => prev.map(n => n.id === payload.new.id ? { ...n, ...payload.new, time: n.time } : n))
+          if (String(payload.new.restaurant_id) !== String(restaurant.id)) return;
+          setNotifications(prev => prev.map(n => String(n.id) === String(payload.new.id) ? { ...n, ...payload.new, time: n.time } : n))
         }
       )
       .subscribe()
@@ -391,9 +392,8 @@ export default function DashboardLayoutClient({
 
   return (
     <div className={`h-screen flex flex-col overflow-hidden font-sans antialiased text-[#111827] bg-[#F5F5F5]`}>
-      {/* Push Notification Providers & Prompts */}
+      {/* Push Notification Providers */}
       <OneSignalProvider userId={restaurant?.id} />
-      <NotificationPromptModal />
 
       {/* Trial Countdown Banner */}
       {trialBanner}
@@ -663,7 +663,7 @@ export default function DashboardLayoutClient({
       </main>
 
       {/* FLOATING BOTTOM NAVIGATION BAR */}
-      <div className={`fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none px-4 select-none transition-all duration-300 ${isNotificationOpen || isOrdersModalOpen || isBottomNavHidden || !restaurant || !restaurant.setup_completed ? 'translate-y-24 opacity-0 md:translate-y-0 md:opacity-100' : 'translate-y-0 opacity-100'}`}>
+      <div className={`fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none px-4 select-none transition-all duration-300 ${isBottomNavHidden ? 'translate-y-24 opacity-0' : (isNotificationOpen || isOrdersModalOpen || !restaurant || !restaurant.setup_completed ? 'translate-y-24 opacity-0 md:translate-y-0 md:opacity-100' : 'translate-y-0 opacity-100')}`}>
         <nav className="pointer-events-auto bg-white border border-[#EEEEEE] rounded-[16px] h-[64px] shadow-[0_8px_30px_rgba(0,0,0,0.06)] grid grid-cols-5 w-full max-w-[80vw] sm:max-w-[720px] overflow-hidden">
           {tabs.map((tab) => {
             const Icon = tab.icon

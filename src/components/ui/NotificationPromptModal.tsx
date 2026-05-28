@@ -21,6 +21,13 @@ export default function NotificationPromptModal() {
               // If it's 'default', it means the user hasn't been asked yet.
               if (permission === "default") {
                 setIsOpen(true);
+              } else if (permission === "granted") {
+                // Already granted, ensure OneSignal is registered since autoRegister is false
+                if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+                  OneSignal.Notifications.requestPermission();
+                } else if (typeof (OneSignal as any).registerForPushNotifications === 'function') {
+                  (OneSignal as any).registerForPushNotifications();
+                }
               }
             } else if (OneSignal && OneSignal.Notifications) {
               // Fallback for browsers that don't support the native Notification API well

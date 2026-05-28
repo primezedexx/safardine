@@ -22,11 +22,8 @@ export default function OneSignalProvider({
           
           const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
           
-          // OneSignal strictly enforces the origin based on its dashboard configuration.
-          // Since it's locked to safardine.vercel.app, initializing it on localhost will crash the dev server.
           if (isLocalhost) {
-            console.info("OneSignal: Bypassing initialization on localhost to prevent origin restriction errors.");
-            return;
+            console.info("OneSignal: Initializing on localhost. Ensure 'Treat HTTP localhost as HTTPS' is enabled in OneSignal dashboard or it might fail.");
           }
           
           const initOptions: any = {
