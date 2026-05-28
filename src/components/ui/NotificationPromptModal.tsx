@@ -43,13 +43,23 @@ export default function NotificationPromptModal() {
     setIsOpen(false);
     localStorage.setItem("safardine_notif_prompted", "true");
     try {
-      if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
-        await OneSignal.Notifications.requestPermission();
-      } else if (OneSignal.Slidedown) {
-        await OneSignal.Slidedown.promptPush();
+      if ("Notification" in window) {
+        const permission = await window.Notification.requestPermission();
+        if (permission === "granted") {
+          // Sync with OneSignal after granting native permission
+          if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+            await OneSignal.Notifications.requestPermission();
+          } else if (typeof (OneSignal as any).registerForPushNotifications === 'function') {
+            await (OneSignal as any).registerForPushNotifications();
+          }
+        }
       } else {
-        // Fallback for older versions of react-onesignal
-        await (OneSignal as any).registerForPushNotifications();
+        // Fallback if native Notification API is somehow missing
+        if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+          await OneSignal.Notifications.requestPermission();
+        } else if (typeof (OneSignal as any).registerForPushNotifications === 'function') {
+          await (OneSignal as any).registerForPushNotifications();
+        }
       }
     } catch (error) {
       console.error("Error prompting push:", error);
