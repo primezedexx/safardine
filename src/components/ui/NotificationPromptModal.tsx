@@ -34,7 +34,14 @@ export default function NotificationPromptModal() {
     setIsOpen(false);
     localStorage.setItem("safardine_notif_prompted", "true");
     try {
-      await OneSignal.Slidedown.promptPush();
+      if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === 'function') {
+        await OneSignal.Notifications.requestPermission();
+      } else if (OneSignal.Slidedown) {
+        await OneSignal.Slidedown.promptPush();
+      } else {
+        // Fallback for older versions of react-onesignal
+        await OneSignal.registerForPushNotifications();
+      }
     } catch (error) {
       console.error("Error prompting push:", error);
     }

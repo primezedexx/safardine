@@ -76,6 +76,10 @@ export async function signout() {
   redirect('/login')
 }
 
+export async function completeSetupCacheInvalidation() {
+  revalidatePath('/', 'layout')
+}
+
 export async function uploadRestaurantImage(formData: FormData) {
   const supabase = await createClient()
   const image = formData.get('file') as File

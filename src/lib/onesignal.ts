@@ -33,6 +33,7 @@ export async function sendPushNotification({
 
     if (userIds && userIds.length > 0) {
       payload.include_aliases = { external_id: userIds };
+      payload.include_external_user_ids = userIds;
     } else if (tags && tags.length > 0) {
       // Targeting by tags instead of specific users
       payload.filters = tags;

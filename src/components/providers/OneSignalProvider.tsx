@@ -46,7 +46,11 @@ export default function OneSignalProvider({
 
           // Log in the user to associate devices with their Supabase user ID
           if (userId) {
-            await OneSignal.login(userId);
+            if (typeof OneSignal.login === 'function') {
+              await OneSignal.login(userId);
+            } else if (typeof (OneSignal as any).setExternalUserId === 'function') {
+              await (OneSignal as any).setExternalUserId(userId);
+            }
           }
         } catch (error) {
           console.error("OneSignal Init Error:", error);

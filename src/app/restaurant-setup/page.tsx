@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { uploadRestaurantImage, signout } from '@/app/(auth)/actions'
+import { uploadRestaurantImage, signout, completeSetupCacheInvalidation } from '@/app/(auth)/actions'
 
 const categories = [
   'Fine Dining',
@@ -189,6 +189,14 @@ export default function RestaurantSetup() {
       if (saveError) throw saveError
 
       setSuccess(true)
+      
+      // Invalidate the layout cache so dashboard fetches the new restaurant profile
+      try {
+        await completeSetupCacheInvalidation()
+      } catch (cacheErr) {
+        console.error('Failed to invalidate cache:', cacheErr)
+      }
+
       setTimeout(() => {
         router.push('/dashboard')
       }, 1500)
