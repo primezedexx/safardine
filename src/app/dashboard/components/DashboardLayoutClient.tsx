@@ -270,7 +270,9 @@ export default function DashboardLayoutClient({
           setNotifications(prev => prev.map(n => String(n.id) === String(payload.new.id) ? { ...n, ...payload.new, time: n.time } : n))
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        console.log('Main Notification Channel Status:', status, err);
+      })
 
     // Secondary channel to force data sync if notifications are explicitly disabled by the user
     const dataChannel = supabase
@@ -284,7 +286,9 @@ export default function DashboardLayoutClient({
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'restaurant_scans' }, (payload) => {
         if (String(payload.new.restaurant_id) === String(restaurant.id)) router.refresh();
       })
-      .subscribe()
+      .subscribe((status, err) => {
+        console.log('Data Sync Channel Status:', status, err);
+      })
 
     return () => {
       supabase.removeChannel(channel)
