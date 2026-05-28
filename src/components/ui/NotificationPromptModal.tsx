@@ -14,14 +14,23 @@ export default function NotificationPromptModal() {
       if (typeof window !== "undefined") {
         const hasPrompted = localStorage.getItem("safardine_notif_prompted");
         if (!hasPrompted) {
-          // Check if already subscribed or denied
-          const isSupported = OneSignal.Notifications.isPushSupported();
-          if (isSupported) {
-            // @ts-ignore - type definition in react-onesignal might be a boolean
-            const permission: any = OneSignal.Notifications.permission;
-            if (permission !== true && permission !== "granted" && permission !== "denied") {
-              setIsOpen(true);
+          try {
+            // Check native browser notification permission state
+            if ("Notification" in window) {
+              const permission = Notification.permission;
+              // If it's 'default', it means the user hasn't been asked yet.
+              if (permission === "default") {
+                setIsOpen(true);
+              }
+            } else if (OneSignal && OneSignal.Notifications) {
+              // Fallback for browsers that don't support the native Notification API well
+              const permission: any = OneSignal.Notifications.permission;
+              if (permission !== true && permission !== "granted" && permission !== "denied") {
+                setIsOpen(true);
+              }
             }
+          } catch (err) {
+            console.error("Error checking notification support:", err);
           }
         }
       }
